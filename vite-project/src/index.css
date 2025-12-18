@@ -1,68 +1,134 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+/* 1. 画面全体の背景設定 */
+.backgroundStyle {
+  /* 画面いっぱいに広げる設定 */
+  width: 100vw;
+  height: 100vh;
+  position: fixed; /* 画面に固定 */
+  top: 0;
+  left: 0;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
+  /* 中央寄せの設定 */
   display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  justify-content: center; 
+  align-items: center;     
+
+  /* 背景画像の設定 */
+  background-image: url('/image/background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #050a1b; /* 画像がない時の予備色 */
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+/* 2. 背景で光る星のレイヤー */
+.login-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+.twinkle-star {
+  position: absolute;
+  background-color: white;
+  border-radius: 50%;
+  opacity: 0;
+  animation: twinkle linear infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { transform: scale(0); opacity: 0; }
+  50% { transform: scale(1); opacity: 1; }
+}
+
+.cardStyle {
+  background-color: rgba(255, 255, 255, 0.85);
+  padding: 40px;
+  border-radius: 24px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+  
+  width: 400px;
+  /* ここを追加：新規登録時の高さに合わせて最小値を固定する */
+  min-height: 520px; 
+  
+  /* 中身を上下中央ではなく、上から順に並べる設定 */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+
+  text-align: center;
+  z-index: 10;
+}
+
+/* 4. ロゴ */
+.login-logo {
+  display: block;
+  margin: 0 auto 20px auto;
+  width: 200px;
+  height: auto;
+}
+
+/* 5. タブ切り替え */
+.tab-group {
+  display: flex;
+  margin-bottom: 25px;
+  border-bottom: 1px solid #eee;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  background: none;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  font-size: 1.1em;
+  font-weight: bold;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+/* 6. 入力フォームのパーツ */
+.input-group {
+  margin-bottom: 15px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label-style {
+  font-size: 0.9em;
+  font-weight: bold;
+  color: #444;
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1em;
+  box-sizing: border-box; /* はみ出し防止 */
+  outline: none;
+}
+
+.input-field:focus {
+  border-color: #007bff;
+}
+
+/* 7. 送信ボタン */
+.buttonStyle {
+  background-color: #5cb85c;
+  color: white;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1em;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
 }

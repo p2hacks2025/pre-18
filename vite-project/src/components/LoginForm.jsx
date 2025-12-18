@@ -1,116 +1,155 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+//バックエンドと連携するときにこれをインポートする。画面遷移のためのライブラリ
+//import { useNavigate } from 'react-router-dom';
+import './LoginForm.css';
 
-// スタイルはここでは省略しますが、実際にはCSSやCSS-in-JSでスタイルを適用します。
-const containerStyle = {
-  maxWidth: '400px',
-  margin: '50px auto',
-  padding: '20px',
-  border: '1px solid #ccc',
-  borderRadius: '8px',
-  boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-};
-
-const inputStyle = {
-  width: '100%',
-  padding: '10px',
-  margin: '8px 0',
-  boxSizing: 'border-box',
-  border: '1px solid #ddd',
-  borderRadius: '4px'
-};
-
-const buttonStyle = {
-  backgroundColor: '#5cb85c',
-  color: 'white',
-  padding: '10px 15px',
-  border: 'none',
-  borderRadius: '4px',
-  cursor: 'pointer',
-  width: '100%',
-  marginTop: '10px'
-};
-
-const LoginForm = () => {
-  // ユーザー名とパスワードの状態を管理する
-  const [username, setUsername] = useState('');
+const LoginForm = ({ onLogin }) => {
+  const [mode, setMode] = useState('login');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  // エラーメッセージの状態を管理する (例: ログイン失敗時)
+  const [username, setUsername] = useState('');
   const [error, setError] = useState('');
+  const [Stars, setStars] = useState([]);
 
-  // フォーム送信時の処理
-  const handleSubmit = (event) => {
-    // フォームのデフォルトの送信動作（ページリロード）を防止
-    event.preventDefault();
-    setError(''); // エラーメッセージをリセット
+  //画面遷移のための定数
+  //const navigate = useNavigate();
 
-    // --- ここにログインの認証ロジックを実装します ---
-    // 例: バリデーションチェック
-    if (!username || !password) {
-      setError('ユーザー名とパスワードの両方を入力してください。');
-      return;
+  useEffect(() => {
+    const stars = Array.from({ length: 80 }).map((_, i) => ({
+      id: i,
+      size: Math.random() * 2 + 1 + 'px',//1~3px
+      top: Math.random() * 100 + '%',//0~100%
+      left: Math.random() * 100 + '%',//0~100%
+      duration: Math.random() * 3 + 2 + 's',//2~5s
+      delay: Math.random() * 5 + 's',//0~5s
+    }));
+    setStars(stars);
+  }, []);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setError('');
+    if (mode === 'signup') {
+      console.log('新規登録:', { username, email, password });
+    } else {
+      console.log('ログイン:', { username, email, password });
     }
-
-    // バックエンド（Python）へのAPIコールを行う想定
-    console.log('ログイン試行:', { username, password });
+    onLogin();
 
     // 実際のアプリケーションでは、axiosなどを使って以下のようにAPIコールを行います。
     /*
     axios.post('/api/login', { username, password })
       .then(response => {
-        // 成功時の処理: 例としてトークンを保存し、ユーザーをホーム画面にリダイレクト
+        // 成功時の処理。ホーム画面に遷移
         console.log('ログイン成功:', response.data);
-        // navigate('/dashboard'); 
+        navigate('/dashboard'); 
       })
       .catch(err => {
-        // 失敗時の処理: エラーメッセージを表示
+        // 失敗時の処理
         console.error('ログイン失敗:', err);
         setError('ユーザー名またはパスワードが正しくありません。');
       });
     */
 
-    // デモとして、成功メッセージを一時的に表示する
-    alert(`ログインを試行しました。ユーザー名: ${username}`);
-    // 実際の成功時には、ページ遷移などを行います。
   };
 
   return (
-    <div style={containerStyle}>
-      <h2>ログイン</h2>
-      {/* エラーメッセージの表示 */}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="username">ユーザー名 / メールアドレス:</label>
-          <input
-            id="username"
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            style={inputStyle}
-            required
+    <div className="backgroundStyle" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <div className="login-background">
+        {Stars.map((star) => (
+          <div
+            key={star.id}
+            className="twinkle-star"
+            style={{
+              width: star.size,
+              height: star.size,
+              top: star.top,
+              left: star.left,
+              animationDuration: star.duration,
+              animationDelay: star.delay,
+            }}
           />
-        </div>
+        ))}
+      </div>
+
+      <div className="cardStyle">
+        {/*ロゴを入れるためのスペース*/}
+        <img src="/image/logo2.png" alt="logo" className="login-logo" />
         
-        <div>
-          <label htmlFor="password">パスワード:</label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={inputStyle}
-            required
-          />
+        {/*タブの記述*/}
+        <div className="tab-group">
+          <button
+            className="tab-button"
+            style={{
+              /*透明な線を引いて場所を調整する*/
+              borderBottom: mode === 'login' ? '3px solid #007bff' : '3px solid transparent',
+              color: mode === 'login' ? '#007bff' : '#333'
+            }}
+            onClick={() => setMode('login')}
+          >
+            ログイン
+          </button>
+          <button
+            className="tab-button"
+            style={{
+              /*同じく透明な線を引く*/
+              borderBottom: mode === 'signup' ? '3px solid #007bff' : '3px solid transparent',
+              color: mode === 'signup' ? '#007bff' : '#333'
+            }}
+            onClick={() => setMode('signup')}
+          >
+            新規登録
+          </button>
         </div>
-        
-        <button type="submit" style={buttonStyle}>
-          ログイン
-        </button>
-      </form>
+
+        <form onSubmit={handleSubmit} className="form-style">
+          
+          {/*入力ボックスとタイトルの記述*/}
+          <div className="input-group">
+            <label className="label-style">ユーザー名</label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              className="input-field"
+              placeholder="ユーザー名を入力してください"
+            />
+          </div>
+
+          <div className="input-group">
+            <label className="label-style">メールアドレス</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="input-field"
+              placeholder="example@mail.com"
+            />
+          </div>
+
+          <div className="input-group">
+            <label className="label-style">パスワード</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="input-field"
+              placeholder="パスワードを入力してください"
+            />
+          </div>
+          {error && <p style={{ color: '#ff4d4f', fontSize: '0.9em', marginBottom: '10px' }}>{error}</p>}
+          
+          {/*登録ボタンの記述*/}
+          <button type="submit" className="buttonStyle">
+            {mode === 'login' ? 'ログインする' : '登録を完了する'}
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
 
 export default LoginForm;
-

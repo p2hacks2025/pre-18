@@ -2,9 +2,13 @@ import React from 'react';
 import LoginForm from './components/LoginForm';
 
 function App() {
+  const handleLoginSuccess = () =>{
+    console.log("ログイン成功");
+  }
+    
   return (
     <div>
-      <LoginForm />
+      <LoginForm onLogin={handleLoginSuccess}/>
     </div>
   );
 }
