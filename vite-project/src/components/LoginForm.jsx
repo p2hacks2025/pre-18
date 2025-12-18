@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 //バックエンドと連携するときにこれをインポートする。画面遷移のためのライブラリ
 //import { useNavigate } from 'react-router-dom';
-import './LoginForm.css'; 
+import './LoginForm.css';
 
 const LoginForm = ({ onLogin }) => {
   const [mode, setMode] = useState('login');
@@ -77,73 +77,73 @@ const LoginForm = ({ onLogin }) => {
         <img src="/image/logo2.png" alt="logo" className="login-logo" />
 
         <div className="tab-group">
-  <button 
-    className="tab-button"
-    style={{ 
-      /*透明な線を引いて場所を調整する*/
-      borderBottom: mode === 'login' ? '3px solid #007bff' : '3px solid transparent', 
-      color: mode === 'login' ? '#007bff' : '#333' 
-    }}
-    onClick={() => setMode('login')}
-  >
-    ログイン
-  </button>
-  <button 
-    className="tab-button"
-    style={{ 
-      /*同じく透明な線を引く*/
-      borderBottom: mode === 'signup' ? '3px solid #007bff' : '3px solid transparent', 
-      color: mode === 'signup' ? '#007bff' : '#333' 
-    }}
-    onClick={() => setMode('signup')}
-  >
-    新規登録
-  </button>
-</div>
+          <button
+            className="tab-button"
+            style={{
+              /*透明な線を引いて場所を調整する*/
+              borderBottom: mode === 'login' ? '3px solid #007bff' : '3px solid transparent',
+              color: mode === 'login' ? '#007bff' : '#333'
+            }}
+            onClick={() => setMode('login')}
+          >
+            ログイン
+          </button>
+          <button
+            className="tab-button"
+            style={{
+              /*同じく透明な線を引く*/
+              borderBottom: mode === 'signup' ? '3px solid #007bff' : '3px solid transparent',
+              color: mode === 'signup' ? '#007bff' : '#333'
+            }}
+            onClick={() => setMode('signup')}
+          >
+            新規登録
+          </button>
+        </div>
 
         <form onSubmit={handleSubmit} className="form-style">
-  
-  <div className="input-group">
-    <label className="label-style">ユーザー名</label>
-    <input
-      type="text"
-      value={username}
-      onChange={(e) => setUsername(e.target.value)}
-      required
-      className="input-field"
-      placeholder="ユーザー名を入力してください"
-    />
-  </div>
 
-  <div className="input-group">
-    <label className="label-style">メールアドレス</label>
-    <input
-      type="email"
-      value={email}
-      onChange={(e) => setEmail(e.target.value)}
-      required
-      className="input-field"
-      placeholder="example@mail.com"
-    />
-  </div>
+          <div className="input-group">
+            <label className="label-style">ユーザー名</label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              className="input-field"
+              placeholder="ユーザー名を入力してください"
+            />
+          </div>
 
-  <div className="input-group">
-    <label className="label-style">パスワード</label>
-    <input
-      type="password"
-      value={password}
-      onChange={(e) => setPassword(e.target.value)}
-      required
-      className="input-field"
-      placeholder="パスワードを入力してください"
-    />
-  </div>
-  {error && <p style={{ color: '#ff4d4f', fontSize: '0.9em', marginBottom: '10px' }}>{error}</p>}
+          <div className="input-group">
+            <label className="label-style">メールアドレス</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="input-field"
+              placeholder="example@mail.com"
+            />
+          </div>
 
-  <button type="submit" className="buttonStyle">
-    {mode === 'login' ? 'ログインする' : '登録を完了する'}
-  </button>
-</form>
+          <div className="input-group">
+            <label className="label-style">パスワード</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="input-field"
+              placeholder="パスワードを入力してください"
+            />
+          </div>
+          {error && <p style={{ color: '#ff4d4f', fontSize: '0.9em', marginBottom: '10px' }}>{error}</p>}
+
+          <button type="submit" className="buttonStyle">
+            {mode === 'login' ? 'ログインする' : '登録を完了する'}
+          </button>
+        </form>
       </div>
     </div>
   );
