@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
+//バックエンドと連携するときにこれをインポートする。画面遷移のためのライブラリ
+//import { useNavigate } from 'react-router-dom';
 import './LoginForm.css'; 
 
-const LoginForm = ({ onLogin }) => { // 関数名をKariに変更
+const LoginForm = ({ onLogin }) => {
   const [mode, setMode] = useState('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
+  const [error, setError] = useState('');
   const [Stars, setStars] = useState([]);
+
+  //画面遷移のための定数
+  //const navigate = useNavigate();
 
   useEffect(() => {
     const stars = Array.from({ length: 80 }).map((_, i) => ({
@@ -22,12 +28,29 @@ const LoginForm = ({ onLogin }) => { // 関数名をKariに変更
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setError('');
     if (mode === 'signup') {
       console.log('新規登録:', { username, email, password });
     } else {
-      console.log('ログイン:', { email, password });
+      console.log('ログイン:', { username, email, password });
     }
     onLogin();
+
+    // 実際のアプリケーションでは、axiosなどを使って以下のようにAPIコールを行います。
+    /*
+    axios.post('/api/login', { username, password })
+      .then(response => {
+        // 成功時の処理。ホーム画面に遷移
+        console.log('ログイン成功:', response.data);
+        navigate('/dashboard'); 
+      })
+      .catch(err => {
+        // 失敗時の処理
+        console.error('ログイン失敗:', err);
+        setError('ユーザー名またはパスワードが正しくありません。');
+      });
+    */
+
   };
 
   return (
@@ -50,14 +73,14 @@ const LoginForm = ({ onLogin }) => { // 関数名をKariに変更
       </div>
 
       <div className="cardStyle">
-        {/* ロゴを入れるためのスペース */}
+        {/*ロゴを入れるためのスペース*/}
         <img src="/image/logo2.png" alt="logo" className="login-logo" />
 
         <div className="tab-group">
   <button 
     className="tab-button"
     style={{ 
-      /* 'none' ではなく 'transparent'（透明）な線を常に引く */
+      /*透明な線を引いて場所を調整する*/
       borderBottom: mode === 'login' ? '3px solid #007bff' : '3px solid transparent', 
       color: mode === 'login' ? '#007bff' : '#333' 
     }}
@@ -68,7 +91,7 @@ const LoginForm = ({ onLogin }) => { // 関数名をKariに変更
   <button 
     className="tab-button"
     style={{ 
-      /* こちらも同様に transparent を指定 */
+      /*同じく透明な線を引く*/
       borderBottom: mode === 'signup' ? '3px solid #007bff' : '3px solid transparent', 
       color: mode === 'signup' ? '#007bff' : '#333' 
     }}
@@ -80,44 +103,42 @@ const LoginForm = ({ onLogin }) => { // 関数名をKariに変更
 
         <form onSubmit={handleSubmit} className="form-style">
   
-  {/* ユーザー名：条件分岐を外して、常に表示するようにしました */}
   <div className="input-group">
     <label className="label-style">ユーザー名</label>
-    <input 
-      type="text" 
-      value={username} 
-      onChange={(e) => setUsername(e.target.value)} 
-      required 
+    <input
+      type="text"
+      value={username}
+      onChange={(e) => setUsername(e.target.value)}
+      required
       className="input-field"
       placeholder="ユーザー名を入力してください"
     />
   </div>
 
-  {/* メールアドレス */}
   <div className="input-group">
     <label className="label-style">メールアドレス</label>
-    <input 
-      type="email" 
-      value={email} 
-      onChange={(e) => setEmail(e.target.value)} 
-      required 
+    <input
+      type="email"
+      value={email}
+      onChange={(e) => setEmail(e.target.value)}
+      required
       className="input-field"
       placeholder="example@mail.com"
     />
   </div>
 
-  {/* パスワード */}
   <div className="input-group">
     <label className="label-style">パスワード</label>
-    <input 
-      type="password" 
-      value={password} 
-      onChange={(e) => setPassword(e.target.value)} 
-      required 
+    <input
+      type="password"
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+      required
       className="input-field"
-      placeholder="●●●●●●●●"
+      placeholder="パスワードを入力してください"
     />
   </div>
+  {error && <p style={{ color: '#ff4d4f', fontSize: '0.9em', marginBottom: '10px' }}>{error}</p>}
 
   <button type="submit" className="buttonStyle">
     {mode === 'login' ? 'ログインする' : '登録を完了する'}
