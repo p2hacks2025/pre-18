@@ -1,0 +1,58 @@
+/*背景*/
+.background-style{
+    display: flex;
+    min-width: 320px;
+    min-height: 100vh;
+
+    background-image: url('/image/background.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/*記述部分*/
+.container-style{
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0,1);
+}
+
+/*フォーム部分*/
+.form{
+    display: flex;
+    flex-direction: column;
+    gap: 20;
+    margin-top: 20;
+}
+
+/*サブタイトル部分*/
+.subtitle{
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+
+/*入力部分とラベルをまとめたやつ*/
+.input-group{
+    display: flex;
+}
+
+
+/*
+const styles = {
+  inputGroup: { display: 'flex', flexDirection: 'column' },
+  label: { fontWeight: 'bold', marginBottom: '5px' },
+  input: { padding: '10px', border: '1px solid #ccc', borderRadius: '4px' },
+  textarea: { padding: '10px', border: '1px solid #ccc', borderRadius: '4px', minHeight: '100px' },
+  radioGroup: { display: 'flex', gap: '20px' },
+  radioLabel: { display: 'flex', alignItems: 'center', gap: '5px' },
+  tagGrid: { display: 'flex', flexWrap: 'wrap', gap: '10px', padding: '10px', border: '1px solid #eee', borderRadius: '4px' },
+  tagLabel: { backgroundColor: '#f0f0f0', padding: '5px 10px', borderRadius: '15px', fontSize: '0.9em', display: 'flex', alignItems: 'center', gap: '5px' },
+  requiredWarning: { color: 'red', fontSize: '0.8em' },
+  button: { padding: '12px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer' },
+  statusMessage: { padding: '10px', backgroundColor: '#d4edda', color: '#155724', borderRadius: '5px', textAlign: 'center' },
+  checkboxLabel: { display: 'flex', alignItems: 'center', gap: '5px', fontWeight: 'bold' }
+};
+*/
