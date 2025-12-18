@@ -1,6 +1,6 @@
 import React from 'react';
 import LoginForm from './components/LoginForm';
-import MainScreen from './components/MainScreen';
+import RegistrationScreen from './components/RegistrationScreen';
 
 function App() {
   const handleLoginSuccess = () =>{
@@ -9,7 +9,7 @@ function App() {
     
   return (
     <div>
-      <MainScreen/>
+      <RegistrationScreen/>
       {/*<LoginForm onLogin={handleLoginSuccess}/>*/}
     </div>
   );
