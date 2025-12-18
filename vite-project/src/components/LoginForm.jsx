@@ -17,11 +17,11 @@ const LoginForm = ({ onLogin }) => {
   useEffect(() => {
     const stars = Array.from({ length: 80 }).map((_, i) => ({
       id: i,
-      size: Math.random() * 2 + 1 + 'px',
-      top: Math.random() * 100 + '%',
-      left: Math.random() * 100 + '%',
-      duration: Math.random() * 3 + 2 + 's',
-      delay: Math.random() * 5 + 's',
+      size: Math.random() * 2 + 1 + 'px',//1~3px
+      top: Math.random() * 100 + '%',//0~100%
+      left: Math.random() * 100 + '%',//0~100%
+      duration: Math.random() * 3 + 2 + 's',//2~5s
+      delay: Math.random() * 5 + 's',//0~5s
     }));
     setStars(stars);
   }, []);
@@ -75,7 +75,8 @@ const LoginForm = ({ onLogin }) => {
       <div className="cardStyle">
         {/*ロゴを入れるためのスペース*/}
         <img src="/image/logo2.png" alt="logo" className="login-logo" />
-
+        
+        {/*タブの記述*/}
         <div className="tab-group">
           <button
             className="tab-button"
@@ -102,7 +103,8 @@ const LoginForm = ({ onLogin }) => {
         </div>
 
         <form onSubmit={handleSubmit} className="form-style">
-
+          
+          {/*入力ボックスとタイトルの記述*/}
           <div className="input-group">
             <label className="label-style">ユーザー名</label>
             <input
@@ -139,7 +141,8 @@ const LoginForm = ({ onLogin }) => {
             />
           </div>
           {error && <p style={{ color: '#ff4d4f', fontSize: '0.9em', marginBottom: '10px' }}>{error}</p>}
-
+          
+          {/*登録ボタンの記述*/}
           <button type="submit" className="buttonStyle">
             {mode === 'login' ? 'ログインする' : '登録を完了する'}
           </button>
