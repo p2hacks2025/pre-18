@@ -26,31 +26,43 @@ const LoginForm = ({ onLogin }) => {
     setStars(stars);
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => { // async を追加
     e.preventDefault();
     setError('');
-    if (mode === 'signup') {
-      console.log('新規登録:', { username, email, password });
-    } else {
-      console.log('ログイン:', { username, email, password });
-    }
-    onLogin();
 
-    // 実際のアプリケーションでは、axiosなどを使って以下のようにAPIコールを行います。
-    /*
-    axios.post('/api/login', { username, password })
-      .then(response => {
-        // 成功時の処理。ホーム画面に遷移
-        console.log('ログイン成功:', response.data);
-        navigate('/dashboard'); 
-      })
-      .catch(err => {
-        // 失敗時の処理
-        console.error('ログイン失敗:', err);
-        setError('ユーザー名またはパスワードが正しくありません。');
+    // 送信するデータの準備
+    const endpoint = mode === 'signup' ? 'http://127.0.0.1:5000/api/signup' : 'http://127.0.0.1:5000/api/login';
+    const postData = mode === 'signup' 
+      ? { username, email, password } 
+      : { username, password };
+
+    try {
+      // Flaskサーバーにデータを送る
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(postData),
       });
-    */
 
+      const data = await response.json();
+
+      if (response.ok) {
+        // 成功時の処理
+        console.log('成功:', data);
+        onLogin(); // ログイン成功後の画面遷移などを実行
+      } else {
+        // サーバーからエラーが返ってきた場合
+        console.error('エラー:', data);
+        setError(data.message || 'エラーが発生しました');
+      }
+
+    } catch (err) {
+      // 通信自体が失敗した場合
+      console.error('通信エラー:', err);
+      setError('サーバーとの通信に失敗しました。サーバーは起動していますか？');
+    }
   };
 
   return (
