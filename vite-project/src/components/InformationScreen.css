@@ -1,0 +1,43 @@
+.container{ 
+    width: 100%;
+    height: 100vh;
+    position: relative; 
+    padding: 0 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+/*
+  gridBackground: { position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundImage: `linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)`, backgroundSize: '40px 40px', zIndex: -1 },
+  
+  title: { fontSize: '1.4rem', marginBottom: '35px', fontWeight: '200', letterSpacing: '10px', fontFamily: 'serif', transition: 'all 0.5s ease' },
+  
+  formArea: { position: 'relative', width: '100%', maxWidth: '680px', display: 'flex', flexDirection: 'column' },
+  
+  nodeWrapper: { display: 'flex', alignItems: 'flex-start', position: 'relative', zIndex: 2 },
+  nodePoint: { width: '18px', height: '18px', borderRadius: '50%', flexShrink: 0, border: '3px solid', backgroundColor: '#050a1b', marginRight: '25px', marginTop: '6px', transition: 'all 0.5s ease' },
+  nodeBox: { 
+    flex: 1, backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.1)', 
+    borderRadius: '16px', padding: '22px 28px', backdropFilter: 'blur(12px)', transition: 'all 0.3s ease'
+  },
+  nodeHeader: { fontSize: '0.8rem', marginBottom: '18px', fontWeight: 'bold', letterSpacing: '3px', opacity: 0.8 },
+
+  label: { display: 'block', fontSize: '0.75rem', color: '#777', marginBottom: '8px', letterSpacing: '1px' },
+  input: { width: '100%', backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid rgba(255,255,255,0.15)', padding: '8px 0', color: '#fff', fontSize: '1.1rem', outline: 'none', transition: 'border 0.3s ease' },
+  textarea: { width: '100%', backgroundColor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '12px', color: '#fff', fontSize: '0.95rem', minHeight: '75px', maxHeight: '100px', outline: 'none', resize: 'none' },
+
+  // ノード同士を繋ぐ線
+  line: { position: 'absolute', width: '2px', height: '60px', left: '8px', top: '45px', opacity: 0.4, zIndex: 1, transition: 'all 0.5s ease' },
+
+  propertyGrid: { display: 'flex', gap: '30px' },
+  btnGrid: { display: 'flex', flexWrap: 'wrap', gap: '8px' },
+  selectionButton: { padding: '6px 14px', borderRadius: '18px', border: '1px solid', cursor: 'pointer', transition: 'all 0.3s ease', fontSize: '0.75rem', background: 'none' },
+
+  toggleArea: { marginTop: '20px', paddingTop: '15px', borderTop: '1px solid rgba(255,255,255,0.08)' },
+  toggleContent: { cursor: 'pointer', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '10px', transition: 'all 0.3s ease' },
+  toggleIcon: { fontSize: '1.2rem' },
+
+  submitWrapper: { textAlign: 'center', marginTop: '40px' },
+  submitBtn: { padding: '14px 80px', borderRadius: '40px', border: '1px solid', backgroundColor: 'rgba(255,255,255,0.03)', fontSize: '1.1rem', letterSpacing: '6px', cursor: 'pointer', transition: 'all 0.3s ease', fontFamily: 'serif' },
