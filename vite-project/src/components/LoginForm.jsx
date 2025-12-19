@@ -1,61 +1,76 @@
 import React, { useState, useEffect } from 'react';
-//バックエンドと連携するときにこれをインポートする。画面遷移のためのライブラリ
-//import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './LoginForm.css';
 
 const LoginForm = ({ onLogin }) => {
   const [mode, setMode] = useState('login');
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [username, setUsername] = useState('');
-  const [error, setError] = useState('');
   const [Stars, setStars] = useState([]);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-  //画面遷移のための定数
-  //const navigate = useNavigate();
+  const currentColor = '#4facfe';
 
+  /*背景で光る星のエフェクト定義*/
   useEffect(() => {
     const stars = Array.from({ length: 80 }).map((_, i) => ({
       id: i,
-      size: Math.random() * 2 + 1 + 'px',//1~3px
-      top: Math.random() * 100 + '%',//0~100%
-      left: Math.random() * 100 + '%',//0~100%
-      duration: Math.random() * 3 + 2 + 's',//2~5s
-      delay: Math.random() * 5 + 's',//0~5s
+      size: Math.random() * 2 + 1 + 'px',
+      top: Math.random() * 100 + '%',
+      left: Math.random() * 100 + '%',
+      duration: Math.random() * 3 + 2 + 's',
+      delay: Math.random() * 5 + 's',
     }));
     setStars(stars);
   }, []);
 
-  const handleSubmit = (e) => {
+  /*画面遷移のための定義*/
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    if (mode === 'signup') {
-      console.log('新規登録:', { username, email, password });
-    } else {
-      console.log('ログイン:', { username, email, password });
-    }
-    onLogin();
 
-    // 実際のアプリケーションでは、axiosなどを使って以下のようにAPIコールを行います。
-    /*
-    axios.post('/api/login', { username, password })
-      .then(response => {
-        // 成功時の処理。ホーム画面に遷移
-        console.log('ログイン成功:', response.data);
-        navigate('/dashboard'); 
-      })
-      .catch(err => {
-        // 失敗時の処理
-        console.error('ログイン失敗:', err);
-        setError('ユーザー名またはパスワードが正しくありません。');
+    // 送信するデータの準備
+    const endpoint = mode === 'signup' ? 'http://127.0.0.1:5000/api/signup' : 'http://127.0.0.1:5000/api/login';
+    const postData = mode === 'signup' 
+      ? { username, email, password } 
+      : { username, password };
+
+    try {
+      // Flaskサーバーにデータを送る
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(postData),
       });
-    */
 
+      const data = await response.json();
+
+      if (response.ok) {
+        // 成功時の処理
+        console.log('成功:', data);
+        onLogin(); //ログイン成功後の画面遷移などを実行
+        navigate('/dashboard');
+      } else {
+        //サーバーからエラーが返ってきた場合
+        console.error('エラー:', data);
+        setError(data.message || 'エラーが発生しました');
+      }
+
+    } catch (err) {
+      // 通信自体が失敗した場合
+      console.error('通信エラー:', err);
+      setError('サーバーとの通信に失敗しました。サーバーは起動していますか？');
+    }
   };
 
   return (
-    <div className="backgroundStyle" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    <div className="login-container">
       <div className="login-background">
+        {/*星を表示*/}
         {Stars.map((star) => (
           <div
             key={star.id}
@@ -72,82 +87,53 @@ const LoginForm = ({ onLogin }) => {
         ))}
       </div>
 
-      <div className="cardStyle">
-        {/*ロゴを入れるためのスペース*/}
-        <img src="/image/logo2.png" alt="logo" className="login-logo" />
-        
-        {/*タブの記述*/}
-        <div className="tab-group">
-          <button
-            className="tab-button"
-            style={{
-              /*透明な線を引いて場所を調整する*/
-              borderBottom: mode === 'login' ? '3px solid #007bff' : '3px solid transparent',
-              color: mode === 'login' ? '#007bff' : '#333'
-            }}
-            onClick={() => setMode('login')}
-          >
-            ログイン
-          </button>
-          <button
-            className="tab-button"
-            style={{
-              /*同じく透明な線を引く*/
-              borderBottom: mode === 'signup' ? '3px solid #007bff' : '3px solid transparent',
-              color: mode === 'signup' ? '#007bff' : '#333'
-            }}
-            onClick={() => setMode('signup')}
-          >
-            新規登録
-          </button>
+      <h2 className="login-title" style={{ color: currentColor, textShadow: `0 0 20px ${currentColor}44` }}>
+        未完星コレクション
+      </h2>
+
+      <form onSubmit={handleSubmit} className="form-area">
+
+        <div className="node-wrapper">
+          <div className="node-box">
+
+            {/*入力フォーム*/}
+            <div className="tab-group">
+              <button type="button"
+                className="tab-btn"
+                style={mode === 'login' ? { borderBottomColor: currentColor, color: currentColor } : {}}
+                onClick={() => setMode('login')}>ログイン</button>
+              <button type="button"
+                className="tab-btn"
+                style={mode === 'signup' ? { borderBottomColor: currentColor, color: currentColor } : {}}
+                onClick={() => setMode('signup')}>新規登録</button>
+            </div>
+
+            <div style={{ marginBottom: '15px' }}>
+              <label className="input-label">ユーザー名</label>
+              <input type="text" className="input-glow" value={username} onChange={(e) => setUsername(e.target.value)} required />
+            </div>
+
+            <div style={{ marginBottom: '15px' }}>
+              <label className="input-label">メールアドレス</label>
+              <input type="email" className="input-glow" value={email} onChange={(e) => setEmail(e.target.value)} required />
+            </div>
+
+            <div>
+              <label className="input-label">パスワード</label>
+              <input type="password" className="input-glow" value={password} onChange={(e) => setPassword(e.target.value)} required />
+            </div>
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="form-style">
-          
-          {/*入力ボックスとタイトルの記述*/}
-          <div className="input-group">
-            <label className="label-style">ユーザー名</label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-              className="input-field"
-              placeholder="ユーザー名を入力してください"
-            />
+        {/*実行ボタン*/}
+        <div className="node-wrapper" style={{ marginTop: '25px' }}>
+          <div style={{ flex: 1 }}>
+            <button type="submit" className="submit-btn" style={{ borderColor: currentColor, color: currentColor }}>
+              {mode === 'login' ? 'ログイン' : '新規登録'}
+            </button>
           </div>
-
-          <div className="input-group">
-            <label className="label-style">メールアドレス</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="input-field"
-              placeholder="example@mail.com"
-            />
-          </div>
-
-          <div className="input-group">
-            <label className="label-style">パスワード</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="input-field"
-              placeholder="パスワードを入力してください"
-            />
-          </div>
-          {error && <p style={{ color: '#ff4d4f', fontSize: '0.9em', marginBottom: '10px' }}>{error}</p>}
-          
-          {/*登録ボタンの記述*/}
-          <button type="submit" className="buttonStyle">
-            {mode === 'login' ? 'ログインする' : '登録を完了する'}
-          </button>
-        </form>
-      </div>
+        </div>
+      </form>
     </div>
   );
 };
