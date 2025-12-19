@@ -2,6 +2,7 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,unity,node
 
 #つもりのファイル、いらんやつ無視したいんや
+#追記、MOも
 prac_flask
 react-sample-app
 
