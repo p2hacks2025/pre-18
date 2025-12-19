@@ -28,10 +28,10 @@ const MainLayout = ({ items, addItem, updateItemStatus }) => {
           <Link 
             to="/main" 
             className="nav-btn planet-btn"
-            style={getDynamicBtnStyle('#add8e6')}
+            
           >
             <img 
-              src="https://via.placeholder.com/220x220/2196f3/ffffff?text=Earth" 
+              src="earth.png" 
               alt="Earth" 
               className="nav-btn-image" 
             />
@@ -42,10 +42,10 @@ const MainLayout = ({ items, addItem, updateItemStatus }) => {
           <Link 
             to="/main/InformationScreen" 
             className="nav-btn planet-btn"
-            style={getDynamicBtnStyle('#fff9c4')}
+            
           >
             <img 
-              src="https://via.placeholder.com/220x220/fff176/333333?text=Moon" 
+              src="moon.png" 
               alt="Moon" 
               className="nav-btn-image" 
             />
@@ -56,10 +56,10 @@ const MainLayout = ({ items, addItem, updateItemStatus }) => {
           <Link 
             to="/main/CollectionScreen4" 
             className="nav-btn planet-btn sun-btn"
-            style={getDynamicBtnStyle('#ffc1cc')}
+            
           >
             <img 
-              src="https://via.placeholder.com/220x220/ff7043/ffffff?text=Sun" 
+              src="sun.png" 
               alt="Sun" 
               className="nav-btn-image" 
             />

@@ -20,6 +20,8 @@ const MainScreen = () => {
         setStars(stars);
     }, []);
 
+
+    
     const galaxiesWithPositions = useMemo(() => {
         const allTags = ['イラスト', 'アイデア', '学習', '健康', '仕事', '趣味'];
         const grouped = allTags.map(tag => ({
