@@ -6,7 +6,6 @@ const MainLayout = ({ items, addItem, updateItemStatus }) => {
 
   // 色や影など「動的に変わるスタイル」だけを生成する関数
   const getDynamicBtnStyle = (color, isDisabled = false) => ({
-    backgroundColor: color,
     boxShadow: `0 0 50px ${color}88`, // 色に応じた影
     opacity: isDisabled ? 0.6 : 1,
     cursor: isDisabled ? 'default' : 'pointer',
@@ -24,28 +23,27 @@ const MainLayout = ({ items, addItem, updateItemStatus }) => {
         
         <nav className="right-nav">
           
-          {/* 地球：宇宙を見る */}
+          {/* 地球：宇宙を見る（自分のホーム） */}
           <Link 
             to="/main" 
             className="nav-btn planet-btn"
-            
           >
             <img 
-              src="earth.png" 
+              src="/image/earth.png" 
               alt="Earth" 
               className="nav-btn-image" 
             />
             <span className="nav-text">宇宙を<br/>見る</span>
           </Link>
 
+        
           {/* 月：原石登録 */}
           <Link 
             to="/main/InformationScreen" 
             className="nav-btn planet-btn"
-            
           >
             <img 
-              src="moon.png" 
+              src="/image/moon.png" 
               alt="Moon" 
               className="nav-btn-image" 
             />
@@ -56,10 +54,9 @@ const MainLayout = ({ items, addItem, updateItemStatus }) => {
           <Link 
             to="/main/CollectionScreen4" 
             className="nav-btn planet-btn sun-btn"
-            
           >
             <img 
-              src="sun.png" 
+              src="/image/sun.png" 
               alt="Sun" 
               className="nav-btn-image" 
             />
