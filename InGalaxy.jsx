@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './Screen3.css'; // 新しく作ったCSS
+import './InGalaxy.css'; // 新しく作ったCSS
 import './ShootingStar.css'; 
 
 const Screen3 = () => {
