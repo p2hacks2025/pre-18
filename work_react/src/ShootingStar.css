@@ -1,0 +1,58 @@
+/* 単発の流れ星 (.shooting-star) */
+.shooting-star {
+  position: absolute;
+  top: 15%;  /* 出現位置を少し下に調整 */
+  left: 50%;
+  width: 3px;
+  height: 3px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 0 15px 4px white, 0 0 30px 8px rgba(255, 255, 255, 0.5);
+  /* 流星群と同じキラキラアニメーションを使用 */
+  animation: meteor-animation 2s linear forwards; 
+  opacity: 0;
+  z-index: 20; /* 他の星より手前に */
+}
+
+/* 流星群用の星 (.meteor) */
+.meteor {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 0 15px 4px white, 0 0 30px 8px rgba(255, 255, 255, 0.5);
+  animation: meteor-animation 1.5s linear forwards;
+  opacity: 0;
+  z-index: 15;
+}
+
+/* 共通の「尾」の演出 */
+.shooting-star::before,
+.meteor::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 180px; /* 尾をさらに長くしてキラキラ感アップ */
+  height: 1.5px;
+  background: linear-gradient(90deg, white, transparent);
+}
+
+/* 共通のアニメーション定義 */
+@keyframes meteor-animation {
+  0% {
+    transform: rotate(-35deg) translateX(600px);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(-35deg) translateX(-1200px);
+    opacity: 0;
+  }
+}

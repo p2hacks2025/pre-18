@@ -1,0 +1,27 @@
+/* ナビゲーションリスト全体に適用するスタイル (元のMainLayoutのnavItemStyleに相当) */
+.nav-item {
+  list-style: none;
+  padding: 10px 0;
+  border-bottom: 1px solid #555;
+  /* transitionを追加して、色の変化を滑らかにする */
+  transition: background-color 0.2s ease;
+}
+
+/* ホバー時のスタイル */
+.nav-item:hover {
+  /* 背景色を少し薄くする（元の#333から#555に変更） */
+  background-color: #555; 
+  cursor: pointer; /* マウスカーソルをポインターにする */
+}
+
+.planet-btn:hover .planet-img {
+  opacity: 0.9;
+}
+
+/* リンク要素（Link）自体に適用するスタイル */
+.nav-link {
+  color: white;
+  text-decoration: none;
+  display: block;
+  padding: 0 10px; /* ホバーエリアを広げるためにパディングを追加 */
+}

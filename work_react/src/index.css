@@ -1,0 +1,52 @@
+:root {
+  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  /* 宇宙のベースカラー */
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #050a1b; 
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  /* 背景を深い濃紺に統一 */
+  background-color: #050a1b; 
+  /* もし背景画像（星空など）を使う場合はここに設定 */
+  /* background-image: url('/path/to/stars-bg.jpg'); */
+  background-size: cover;
+  overflow-x: hidden;
+}
+
+/* その他のスタイルは維持... */
+a {
+  font-weight: 500;
+  color: #4dd0e1;
+  text-decoration: inherit;
+  transition: color 0.3s ease;
+}
+a:hover {
+  color: #ffffff;
+}
+/* ... */
+/* すべての要素に適用 */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body, html, #root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden; /* 全体でのスクロールを禁止 */
+  background-color: #050a1b;
+}
