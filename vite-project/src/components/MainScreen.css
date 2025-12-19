@@ -1,0 +1,117 @@
+/*背景の余白を消す*/
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #050a1b;
+}
+
+/*画面の調整*/
+.universe-container {
+  width: 100%;
+  height: 100vh;
+  background-color: #050a1b;
+  color: #fff;
+  overflow: hidden;
+  position: relative;
+}
+
+/*背景で光ってる星の見た目*/
+.twinkle-star{
+  position: absolute;
+  background-color: white;
+  border-radius: 50%;
+  opacity: 0;/*最初は透明にする*/
+  animation: twinkle linear infinite;/*アニメーション実行*/
+}
+
+/*星の背景全体のレイヤー（星を重ねるためのもの）*/
+.login-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;/*フォームより後ろに置く*/
+}
+
+/* タイトルを太字・ネオンに */
+.main-title {
+  position: absolute;
+  top: 0px;
+  left: 20px;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: 10px;
+  color: #4facfe;
+  text-shadow: 0 0 20px rgba(79, 172, 254, 0.6);
+  z-index: 10;
+  font-family: 'serif';
+}
+
+/* 銀河のパネル */
+.galaxy-card {
+  width: 312px;
+  height: 312px;
+  background-color: transparent;
+  border: none;
+  box-shadow: none; 
+  
+  backdrop-filter: none;
+  overflow: visible;
+  transition: all 0.4s ease;
+  position: relative;
+}
+
+/* ホバー時の挙動*/
+.galaxy-card:hover {
+  transform: scale(1.05) !important;
+}
+
+/* 通知バブル（SF通信風） */
+.sf-bubble {
+  position: absolute;
+  top: -85px;
+  left: 50%;
+  background: rgba(0, 20, 40, 0.8);
+  border: 1px solid #4facfe;
+  color: #4facfe;
+  padding: 10px 15px;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  clip-path: polygon(0% 0%, 100% 0%, 100% 80%, 20% 80%, 10% 100%, 10% 80%, 0% 80%);
+  backdrop-filter: blur(5px);
+  min-width: 180px;
+}
+
+.sf-bubble-dot {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 8px;
+  height: 8px;
+  background-color: #ff4d4f;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #ff4d4f;
+}
+
+/* 新しく追加：画像とラベルのセットを制御 */
+.galaxy-wrapper {
+  display: flex;
+  flex-direction: column; /* 縦に並べる */
+  align-items: center;    /* ★ これで中身が水平方向の中央に揃う */
+}
+
+/* 銀河ラベル：自身のテキストも中央寄せにする */
+.galaxy-label {
+  margin-top: 10px;
+  font-size: 1rem;
+  font-weight: bold;
+  letter-spacing: 4px;
+  color: #4facfe;
+  font-family: 'serif';
+  text-align: center;     /* ★ 文字自体を中央に寄せる */
+  width: 100%;            /* 横幅をいっぱいにして中央判定を正確にする */
+}

@@ -1,6 +1,10 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python,unity,node
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,unity,node
 
+#つもりのファイル、いらんやつ無視したいんや
+prac_flask
+react-sample-app
+
 ### Node ###
 # Logs
 logs
