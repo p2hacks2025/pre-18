@@ -1,14 +1,14 @@
 import React from 'react';
-import LoginForm from './components/LoginForm';
+import MainScreen from './components/MainScreen';
+// 使わないインポートは一旦コメントアウトしておくとエラーが出ません
+// import { BrowserRouter, Routes, Route } from 'react-router-dom';
+// import LoginForm from './components/LoginForm';
 
 function App() {
-  const handleLoginSuccess = () =>{
-    console.log("ログイン成功");
-  }
-    
   return (
-    <div>
-      <LoginForm onLogin={handleLoginSuccess}/>
+    <div className="App">
+      {/* ログイン判定などを全て飛ばして、MainScreenを直に置く */}
+      <MainScreen />
     </div>
   );
 }
