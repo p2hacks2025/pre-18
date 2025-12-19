@@ -1,7 +1,7 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python,unity,node
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,unity,node
 
-#つもりのファイル、いらんやつ無視したいんや
+#つもりの練習用ファイルを無視したい
 prac_flask
 
 ### Node ###
