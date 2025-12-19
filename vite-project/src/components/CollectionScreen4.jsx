@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
-import './Screen4.css'; // CSSをインポート
+import './CollectionScreen4.css'; // CSSをインポート
 
-const Screen4 = () => {
+const CollectionScreen4 = () => {
   const { items = [] } = useOutletContext() || {};
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('star');
@@ -117,4 +117,4 @@ const Screen4 = () => {
   );
 };
 
-export default Screen4;
+export default CollectionScreen4;

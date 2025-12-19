@@ -40,7 +40,7 @@ const MainLayout = ({ items, addItem, updateItemStatus }) => {
 
           {/* 月：原石登録 */}
           <Link 
-            to="/main/InGalaxy" 
+            to="/main/InformationScreen" 
             className="nav-btn planet-btn"
             style={getDynamicBtnStyle('#fff9c4')}
           >
@@ -54,7 +54,7 @@ const MainLayout = ({ items, addItem, updateItemStatus }) => {
 
           {/* 太陽：コレクション */}
           <Link 
-            to="/main/CollectionScreen" 
+            to="/main/CollectionScreen4" 
             className="nav-btn planet-btn sun-btn"
             style={getDynamicBtnStyle('#ffc1cc')}
           >
