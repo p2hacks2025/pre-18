@@ -52,8 +52,9 @@ const LoginForm = ({ onLogin }) => {
       if (response.ok) {
         // 成功時の処理
         console.log('成功:', data);
-        onLogin(); //ログイン成功後の画面遷移などを実行
-        navigate('/dashboard');
+        //onLogin(); //ログイン成功後の画面遷移などを実行
+        
+        navigate('/main');
       } else {
         //サーバーからエラーが返ってきた場合
         console.error('エラー:', data);
