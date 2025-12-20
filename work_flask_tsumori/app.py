@@ -21,7 +21,6 @@ def login():
 
 @app.route('/api/stones', methods=['GET'])
 def get_stones():
-    # URLから ?user=〇〇 を受け取って logic に渡す
     current_user = request.args.get('user')
     result = get_all_stones(current_user)
     return jsonify(result), 200
@@ -35,11 +34,10 @@ def add_stone():
         tags=data.get('tags'),
         object_type=data.get('objectType'),
         is_public=data.get('isPublic'),
-        username=data.get('username') # ここで名前を受け取る
+        username=data.get('username')
     )
     return jsonify(result), (200 if result["success"] else 400)
 
-# 本質的なRESTful API：URLにIDを含める
 @app.route('/api/stones/<int:stone_id>', methods=['PUT'])
 def update_stone(stone_id):
     data = request.json
@@ -47,6 +45,5 @@ def update_stone(stone_id):
     return jsonify(result), (200 if result["success"] else 400)
 
 if __name__ == '__main__':
-    # 本質：Renderでは環境変数PORTが指定される。なければローカル用の5000を使う。
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)

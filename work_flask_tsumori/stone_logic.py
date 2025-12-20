@@ -1,22 +1,15 @@
+
 import os
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from auth_logic import get_connection
 
-# 修正前：全部取得
-# cur.execute("SELECT * FROM stones ORDER BY id DESC")
-
-# 修正後：自分の石 か 公開されている石 だけ取得
-
-
-# ▼▼▼ usernameを受け取って保存するように変更
 def register_stone(title, memo, tags, object_type, is_public, username):
     conn = None
     cur = None
     try:
         conn = get_connection()
         cur = conn.cursor()
-        # さっき設定した username 列にデータを入れます
         cur.execute(
             """
             INSERT INTO stones (title, memo, tags, object_type, is_public, username)
@@ -33,7 +26,6 @@ def register_stone(title, memo, tags, object_type, is_public, username):
         if cur: cur.close()
         if conn: conn.close()
 
-# ▼▼▼ 自分のデータ(username一致) か 公開データ(is_public) だけ取得
 def get_all_stones(current_user):
     conn = None
     cur = None
@@ -41,7 +33,6 @@ def get_all_stones(current_user):
         conn = get_connection()
         cur = conn.cursor(cursor_factory=RealDictCursor)
         
-        # ここでデータの選り分けをしています
         query = """
             SELECT * FROM stones 
             WHERE username = %s OR is_public = true 
