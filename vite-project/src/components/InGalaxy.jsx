@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate, useOutletContext } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './InGalaxy.css';
 import './ShootingStar.css';
 
-// ▼▼▼ [Main由来] 使用する画像のリスト定義 ▼▼▼
+// ▼▼▼ 使用する画像のリストを定義 ▼▼▼
+// 実際にpublic/imageフォルダに入れているファイル名に合わせて変更してください
 const STAR_IMAGES = [
-  '/image/Hituzi.png',
+   '/image/Hituzi.png',
   '/image/Hutago.png',
   '/image/Kani.png',
   '/image/Otome.png',
@@ -17,10 +18,12 @@ const STAR_IMAGES = [
   '/image/Yagi.png',
   '/image/Tenbin.png',
   '/image/Uo.png',
+  // '/image/star_04.png', // 画像が増えたらここに追加
 ];
 
 const CONSTELLATION_IMAGES = [
   '/image/Genseki.png',
+   // '/image/constellation_03.png',
 ];
 
 const InGalaxy = () => {
@@ -28,59 +31,37 @@ const InGalaxy = () => {
   const location = useLocation();
   const galaxyName = location.state?.galaxyName || 'My Galaxy';
 
-  // --- [Local由来] バックエンド連携: 親コンポーネントからデータをもらう ---
-  // contextがnullの場合に備えてデフォルト値を設定
-  const { items: dbItems = [], fetchItems } = useOutletContext() || {};
+  // --- データ管理 ---
+  const [items, setItems] = useState(() => {
+    // 元データ
+    const initialItems = [
+      { id: 1, theme: 'star', title: '一番星', date: '2025-12-01', comment: 'とても明るい星でした。', tags: ['天体', '日常'], isCompleted: false, top: '20%', left: '15%' },
+      { id: 2, theme: 'star', title: '北極星', date: '2025-12-05', comment: '道標になる星です。', tags: ['天体', '風景'], isCompleted: false, top: '60%', left: '10%' },
+      { id: 3, theme: 'star', title: 'シリウス', date: '2025-12-10', comment: '冬のダイヤモンドの一つ。', tags: ['夜景'], isCompleted: false, top: '30%', left: '70%' },
+      { id: 4, theme: 'star', title: 'ベガ', date: '2025-12-15', comment: '夏の大三角形。', tags: ['自然'], isCompleted: false, top: '75%', left: '80%' },
+      { id: 5, theme: 'constellation', title: 'オリオン座', date: '2025-12-02', comment: '三つ星が特徴的です。', tags: ['天体', '夜景'], isCompleted: false, top: '15%', left: '45%' },
+      { id: 6, theme: 'constellation', title: 'カシオペア座', date: '2025-12-08', comment: 'Wの形をしています。', tags: ['天体'], isCompleted: false, top: '50%', left: '55%' },
+    ];
 
-  // 表示用のState (DBデータ + 画像パス + 座標)
-  const [displayItems, setDisplayItems] = useState([]);
+    // ▼▼▼ ランダム画像の割り当て処理 ▼▼▼
+    return initialItems.map(item => {
+      // テーマに合わせて画像リストを選択
+      const imageList = item.theme === 'star' ? STAR_IMAGES : CONSTELLATION_IMAGES;
+      // リストからランダムに1つ選ぶ
+      const randomImage = imageList[Math.floor(Math.random() * imageList.length)];
+
+      return {
+        ...item,
+        imageSrc: randomImage, // 選ばれた画像を保存
+      };
+    });
+  });
+
   const [selectedItem, setSelectedItem] = useState(null);
-
-  // --- 1. データ初期化 (DBデータに画像を割り当てる) ---
-  useEffect(() => {
-    // 画面ロード時に最新データを取得
-    if (fetchItems) {
-      fetchItems();
-    }
-  }, [fetchItems]);
-
-  useEffect(() => {
-    // DBからデータが届いたら、UIが表示しやすい形に変換してstateに入れる
-    if (dbItems && dbItems.length > 0) {
-      const formattedItems = dbItems.map((item) => {
-        // テーマ判定 (原石ならstar, 星座ならconstellation)
-        const theme = item.isGem ? 'star' : 'constellation';
-        
-        // [Main由来] 画像ランダム割り当てロジック
-        const imageList = theme === 'star' ? STAR_IMAGES : CONSTELLATION_IMAGES;
-        // idを使って固定のランダム（リロードしても画像が変わらないように簡易的なハッシュ利用）
-        // ※完全にランダムがいいなら Math.random() だけでOK
-        const seed = item.id ? item.id.toString().charCodeAt(0) : Math.random() * 100;
-        const randomImage = imageList[seed % imageList.length] || imageList[0];
-
-        return {
-          ...item,
-          theme: theme,
-          imageSrc: randomImage, // 画像パスをセット
-          comment: item.memo || 'No details.',
-          tags: Array.isArray(item.tags) ? item.tags : (item.tags ? [item.tags] : []),
-          date: item.date || 'Unknown Date',
-          
-          // 座標 (DBにあればそれを使う、なければランダム)
-          top: item.top || `${Math.random() * 70 + 10}%`, 
-          left: item.left || `${Math.random() * 80 + 10}%`,
-        };
-      });
-      setDisplayItems(formattedItems);
-    } else {
-       setDisplayItems([]);
-    }
-  }, [dbItems]);
-
-  // --- 2. アニメーション制御 (共通) ---
   const [showShootingStar, setShowShootingStar] = useState(false);
   const [meteors, setMeteors] = useState([]);
 
+  // --- アニメーション制御 ---
   useEffect(() => {
     const timer = setTimeout(() => {
       const random = Math.random() * 100;
@@ -109,32 +90,16 @@ const InGalaxy = () => {
     setTimeout(() => setMeteors([]), 5000);
   };
 
-  // --- 3. UIイベント ---
   const handleComplete = (id) => {
-    // [Local由来] 見た目を更新 (本来はここでAPI通信 updateItem を呼ぶ)
-    setDisplayItems(prev => prev.map(item => 
+    setItems(items.map(item =>
       item.id === id ? { ...item, isCompleted: true } : item
     ));
     setSelectedItem(null);
   };
 
-  // データがない時の表示
-  if (!displayItems || displayItems.length === 0) {
-      return (
-        <div className="s3-container" style={{display:'flex', justifyContent:'center', alignItems:'center', flexDirection:'column'}}>
-           <h2 style={{color:'white', opacity:0.7}}>まだ星は見つかりません...</h2>
-           <p style={{color:'#ccc'}}>データロード中、または星が登録されていません。</p>
-           <button onClick={() => navigate('/main/CollectionScreen4')} style={{marginTop:'20px', padding:'10px 20px', borderRadius:'20px', border:'none', cursor:'pointer'}}>
-             コレクションを確認する
-           </button>
-        </div>
-      );
-  }
-
-  // --- 4. 描画 ---
   return (
     <div className="s3-container">
-      {/* [Main由来] 戻るボタン */}
+      {/* 戻るボタン */}
       <button 
         onClick={() => navigate(-1)}
         style={{
@@ -157,13 +122,10 @@ const InGalaxy = () => {
         ← Return
       </button>
 
-      {/* [共通] デバッグパネル */}
+      {/* デバッグパネル */}
       <div className="debug-panel">
         <button onClick={triggerShootingStar} className="debug-button">🌠 流れ星</button>
         <button onClick={triggerMeteorShower} className="debug-button">✨ 流星群</button>
-        <button onClick={() => navigate('/main/CollectionScreen4')} className="debug-button" style={{marginLeft:'10px', background:'rgba(255,255,255,0.2)'}}>
-          📋 一覧へ
-        </button>
       </div>
 
       <h1>{galaxyName}</h1>
@@ -179,11 +141,12 @@ const InGalaxy = () => {
         />
       ))}
 
-      {/* [Main由来のデザイン] 星空エリア (画像を使用) */}
+      {/* 星空エリア */}
       <div className="sky-area">
-        {displayItems.map((item) => (
+        {items.map((item) => (
           <img
             key={item.id}
+            // ▼▼▼ ここで割り当てたランダム画像を使用 ▼▼▼
             src={item.imageSrc} 
             alt={item.title}
             onClick={() => setSelectedItem(item)}
@@ -192,9 +155,8 @@ const InGalaxy = () => {
               position: 'absolute',
               top: item.top,
               left: item.left,
-              // Mainのデザイン指定 (サイズやエフェクト)
-              width: '100px', // ※500pxだと大きすぎる可能性があるため調整。必要なら'500px'に戻してください
-              height: '100px',
+              width: '500px',  // 写真が見やすいように少し大きくしました
+              height: '500px',
               cursor: 'pointer',
               /* 完了時の発光エフェクト */
               filter: item.isCompleted
@@ -214,13 +176,14 @@ const InGalaxy = () => {
             <h2>{selectedItem.title}</h2>
             <hr style={{ borderColor: 'rgba(255,255,255,0.2)' }} />
             
+            {/* モーダル内にも大きく画像を表示する場合 */}
             <div style={{textAlign: 'center', margin: '15px 0'}}>
                 <img src={selectedItem.imageSrc} alt="" style={{width: '100px', height:'100px', borderRadius:'50%', objectFit:'cover', border:'2px solid rgba(255,255,255,0.5)'}} />
             </div>
 
             <div style={{ marginTop: '10px', fontSize: '1.1em', lineHeight: '1.6' }}>
               <p><strong>日付:</strong> {selectedItem.date}</p>
-              <p><strong>テーマ:</strong> {selectedItem.theme === 'star' ? '星 (Star)' : '星座 (Constellation)'}</p>
+              <p><strong>テーマ:</strong> {selectedItem.theme === 'star' ? '星' : '星座'}</p>
               <p><strong>コメント:</strong> {selectedItem.comment}</p>
               <p><strong>タグ:</strong> {selectedItem.tags.join(', ')}</p>
             </div>
