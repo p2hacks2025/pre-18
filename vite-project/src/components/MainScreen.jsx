@@ -2,7 +2,7 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import './MainScreen.css';
 
-// ▼ 他人の宇宙のモックデータ
+// ▼ 他人の宇宙のモックデータ（UI表示用に情報量が多いフロント版を採用）
 const MOCK_OTHER_UNIVERSES = [
     {
         id: 'user_01',
@@ -37,6 +37,7 @@ const MOCK_OTHER_UNIVERSES = [
 ];
 
 const MainScreen = () => {
+    // コンテキストがnullの場合でもクラッシュしないよう空配列をデフォルト設定
     const { items = [] } = useOutletContext() || {}; 
     const navigate = useNavigate();
     const [Stars, setStars] = useState([]);
@@ -44,8 +45,6 @@ const MainScreen = () => {
     // ▼ 状態管理
     const [isPublicMode, setIsPublicMode] = useState(false); // false=My Universe, true=Global
     const [visitingUser, setVisitingUser] = useState(null); 
-    
-    // ※ activeTab (Display切り替え) は削除しました
 
     /* 背景で光る星のエフェクト */
     useEffect(() => {
@@ -72,14 +71,13 @@ const MainScreen = () => {
     const galaxiesWithPositions = useMemo(() => {
         const allTags = ['イラスト', 'アイデア', '学習', '健康', '仕事', '趣味'];
         
-        // フィルタリング（今回はすべて表示対象としてカウントします）
-        // もし「星座のみ」「原石のみ」などの絞り込みが必要な場合はここで復活させます
+        // フィルタリング（今回はすべて表示対象としてカウント）
         const filteredItems = currentItems; 
 
         const grouped = allTags.map(tag => ({
             name: tag,
             count: filteredItems.filter(item => item.tags?.includes(tag)).length,
-            // ★削除: latestMessage (シグナル) の生成処理を削除
+            // フロントエンドの指示通り、メッセージ生成処理はnull固定（削除）
             latestMessage: null 
         }));
 
@@ -104,6 +102,7 @@ const MainScreen = () => {
         });
     }, [currentItems, visitingUser]);
 
+    // クリック時の遷移処理
     const handleGalaxyClick = (galaxy) => {
         if (!visitingUser) {
             navigate('/main/Ingalaxy', { state: { galaxyName: galaxy.name } });
@@ -113,7 +112,7 @@ const MainScreen = () => {
     return (
         <div className="universe-container">
             
-            {/* ヘッダー */}
+            {/* ヘッダー（フロントエンドのタブデザインを採用） */}
             <header className="main-header">
                 {/* 左側：タイトル */}
                 <h1 className="main-header-title">
@@ -142,8 +141,6 @@ const MainScreen = () => {
                     </div>
                 )}
             </header>
-
-            {/* ★削除: ここにあった sub-filter-container (Display切り替え) を削除しました */}
 
             {/* 星を表示 */}
             {Stars.map((star) => (
@@ -199,7 +196,7 @@ const MainScreen = () => {
                             }}
                             onClick={() => handleGalaxyClick(galaxy)}
                         >
-                            {/* ★削除: ここにあった sf-bubble (シグナル吹き出し) を削除しました */}
+                            {/* フロントエンドの指示通り、sf-bubble（シグナル）は削除 */}
 
                             {/* 銀河パネル */}
                             <div
