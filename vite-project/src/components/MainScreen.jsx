@@ -1,16 +1,16 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { useOutletContext, useNavigate } from 'react-router-dom';
 import './MainScreen.css';
 
-// ▼ 他人の宇宙のモックデータ（実際はサーバーから取得するイメージ）
+// ▼ 他人の宇宙のモックデータ
 const MOCK_OTHER_UNIVERSES = [
     {
         id: 'user_01',
         name: 'ANDROMEDA',
         items: [
-            { tags: ['イラスト'] }, { tags: ['イラスト'] }, { tags: ['イラスト'] },
-            { tags: ['趣味'] }, { tags: ['趣味'] },
-            { tags: ['仕事'] }
+            { tags: ['イラスト'], isGem: true }, { tags: ['イラスト'], isGem: true }, { tags: ['イラスト'], isConstellation: true },
+            { tags: ['趣味'], isGem: true }, { tags: ['趣味'], isConstellation: true },
+            { tags: ['仕事'], isGem: true }
         ],
         message: 'イラスト中心の宇宙です'
     },
@@ -18,9 +18,9 @@ const MOCK_OTHER_UNIVERSES = [
         id: 'user_02',
         name: 'SIRIUS',
         items: [
-            { tags: ['学習'] }, { tags: ['学習'] }, { tags: ['学習'] }, { tags: ['学習'] },
-            { tags: ['アイデア'] }, { tags: ['アイデア'] },
-            { tags: ['健康'] }
+            { tags: ['学習'], isGem: true }, { tags: ['学習'], isGem: true }, { tags: ['学習'], isConstellation: true }, { tags: ['学習'], isGem: true },
+            { tags: ['アイデア'], isGem: true }, { tags: ['アイデア'], isGem: true },
+            { tags: ['健康'], isConstellation: true }
         ],
         message: '学習記録が蓄積されています'
     },
@@ -28,23 +28,26 @@ const MOCK_OTHER_UNIVERSES = [
         id: 'user_03',
         name: 'ORION',
         items: [
-            { tags: ['健康'] }, { tags: ['健康'] },
-            { tags: ['仕事'] }, { tags: ['仕事'] },
-            { tags: ['趣味'] }, { tags: ['趣味'] }
+            { tags: ['健康'], isGem: true }, { tags: ['健康'], isGem: true },
+            { tags: ['仕事'], isGem: true }, { tags: ['仕事'], isConstellation: true },
+            { tags: ['趣味'], isGem: true }, { tags: ['趣味'], isGem: true }
         ],
         message: 'バランス型の宇宙'
     }
 ];
 
 const MainScreen = () => {
-    const { items = [] } = useOutletContext() || {};
+    const { items = [] } = useOutletContext() || {}; 
+    const navigate = useNavigate();
     const [Stars, setStars] = useState([]);
     
-    // ▼ 状態管理の追加
-    const [isPublicMode, setIsPublicMode] = useState(false); // false=自分, true=他人モード
-    const [visitingUser, setVisitingUser] = useState(null);  // 誰の宇宙を見ているか
+    // ▼ 状態管理
+    const [isPublicMode, setIsPublicMode] = useState(false); // false=My Universe, true=Global
+    const [visitingUser, setVisitingUser] = useState(null); 
+    
+    // ※ activeTab (Display切り替え) は削除しました
 
-    /* 背景で光る星のエフェクト定義 */
+    /* 背景で光る星のエフェクト */
     useEffect(() => {
         const stars = Array.from({ length: 80 }).map((_, i) => ({
             id: i,
@@ -57,7 +60,7 @@ const MainScreen = () => {
         setStars(stars);
     }, []);
 
-    // ▼ 現在表示すべきアイテムデータを決定する
+    // ▼ 表示するアイテムを決定
     const currentItems = useMemo(() => {
         if (visitingUser) {
             return visitingUser.items;
@@ -65,77 +68,82 @@ const MainScreen = () => {
         return items;
     }, [items, visitingUser]);
 
-    // ▼ 銀河の配置計算（currentItems を使うように変更）
+    // ▼ 銀河の生成ロジック
     const galaxiesWithPositions = useMemo(() => {
         const allTags = ['イラスト', 'アイデア', '学習', '健康', '仕事', '趣味'];
         
+        // フィルタリング（今回はすべて表示対象としてカウントします）
+        // もし「星座のみ」「原石のみ」などの絞り込みが必要な場合はここで復活させます
+        const filteredItems = currentItems; 
+
         const grouped = allTags.map(tag => ({
             name: tag,
-            count: currentItems.filter(item => item.tags?.includes(tag)).length,
-            latestMessage: (tag === 'アイデア' && !visitingUser) ? 'SIGNAL: 新しい進捗を検知...' : null
+            count: filteredItems.filter(item => item.tags?.includes(tag)).length,
+            // ★削除: latestMessage (シグナル) の生成処理を削除
+            latestMessage: null 
         }));
 
         const topThree = grouped.sort((a, b) => b.count - a.count).slice(0, 3);
 
         const fixedPositions = [
-            { top: '15%', left: '15%', rotate: '-8deg' },
-            { top: '50%', left: '40%', rotate: '4deg' },
-            { top: '20%', left: '65%', rotate: '-4deg' },
+            { top: '30%', left: '25%', rotate: '-8deg' },
+            { top: '55%', left: '50%', rotate: '4deg' },
+            { top: '25%', left: '60%', rotate: '-4deg' },
         ];
 
-        /* --- 修正前（コメントアウト） ---
-        return topThree.map((galaxy, index) => ({
-            ...galaxy,
-            ...fixedPositions[index]
-        }));
-        ------------------------------ */
-
-        // ▼▼▼ 修正箇所：ここから新しいロジック ▼▼▼
         return topThree.map((galaxy, index) => {
-            // ▼ 追加: 件数(count)に応じてスケール（大きさ）を計算
-            // 基本サイズ0.8 + (件数 * 0.05)。ただし最大+0.5倍(合計1.3倍)まで制限
-            const baseScale = 0.8; 
+            const baseScale = 0.9; 
             const growthFactor = Math.min(galaxy.count * 0.05, 0.5); 
             const finalScale = baseScale + growthFactor;
     
             return {
                 ...galaxy,
                 ...fixedPositions[index],
-                scale: finalScale // ここで計算したサイズをデータに持たせる
+                scale: finalScale 
             };
         });
-        // ▲▲▲ 修正箇所：ここまで ▲▲▲
-
     }, [currentItems, visitingUser]);
 
-    // ▼ モード切り替えハンドラ
-    const toggleMode = () => {
-        if (isPublicMode) {
-            setIsPublicMode(false);
-            setVisitingUser(null);
-        } else {
-            setIsPublicMode(true);
-            setVisitingUser(null);
+    const handleGalaxyClick = (galaxy) => {
+        if (!visitingUser) {
+            navigate('/main/Ingalaxy', { state: { galaxyName: galaxy.name } });
         }
     };
 
     return (
         <div className="universe-container">
-            {/* ▼ 右上の切り替えボタン */}
-            <div className="top-right-control">
-                <button 
-                    className={`mode-toggle-btn ${isPublicMode ? 'active' : ''}`} 
-                    onClick={toggleMode}
-                >
-                    <span className="mode-label">{isPublicMode ? 'GLOBAL' : 'MY UNIVERSE'}</span>
-                    <div className="mode-indicator"></div>
-                </button>
-            </div>
+            
+            {/* ヘッダー */}
+            <header className="main-header">
+                {/* 左側：タイトル */}
+                <h1 className="main-header-title">
+                    {visitingUser 
+                        ? `UNIVERSE: ${visitingUser.name}` 
+                        : (isPublicMode ? 'GLOBAL UNIVERSE' : 'MY UNIVERSE')}
+                </h1>
 
-            {/* タイトル表示の分岐 */}
-            <h1 className="main-title">
-                {visitingUser ? `UNIVERSE: ${visitingUser.name}` : (isPublicMode ? '銀河を選択' : 'あなたの宇宙')}
-            </h1>
+                {/* 右側：タブ（モード切り替え） */}
+                {!visitingUser && (
+                    <div className="main-header-tabs">
+                        <button 
+                            className={`header-tab-btn ${!isPublicMode ? 'active' : ''}`}
+                            onClick={() => setIsPublicMode(false)}
+                        >
+                            MY UNIVERSE
+                            <div className="header-tab-indicator"></div>
+                        </button>
+                        <button 
+                            className={`header-tab-btn ${isPublicMode ? 'active' : ''}`}
+                            onClick={() => setIsPublicMode(true)}
+                        >
+                            GLOBAL
+                            <div className="header-tab-indicator"></div>
+                        </button>
+                    </div>
+                )}
+            </header>
+
+            {/* ★削除: ここにあった sub-filter-container (Display切り替え) を削除しました */}
 
             {/* 星を表示 */}
             {Stars.map((star) => (
@@ -169,9 +177,8 @@ const MainScreen = () => {
                     </div>
                 </div>
             ) : (
-                /* --- 宇宙空間（自分 または 選択した他人） --- */
+                /* --- 宇宙空間 --- */
                 <div className="universe-canvas">
-                    {/* 戻るボタン（他人の宇宙を見ている時だけ表示） */}
                     {visitingUser && (
                         <button className="back-to-list-btn" onClick={() => setVisitingUser(null)}>
                             ◀ RETURN TO MAP
@@ -186,28 +193,23 @@ const MainScreen = () => {
                                 position: 'absolute',
                                 top: galaxy.top,
                                 left: galaxy.left,
-                                transform: 'translateX(-50%)'
+                                transform: 'translate(-50%, -50%)',
+                                zIndex: 10,
+                                cursor: !visitingUser ? 'pointer' : 'default'
                             }}
+                            onClick={() => handleGalaxyClick(galaxy)}
                         >
-                            {/* SF風通知バブル */}
-                            {galaxy.latestMessage && (
-                                <div className="sf-bubble">
-                                    <div className="sf-bubble-text">{galaxy.latestMessage}</div>
-                                    <div className="sf-bubble-dot"></div>
-                                </div>
-                            )}
+                            {/* ★削除: ここにあった sf-bubble (シグナル吹き出し) を削除しました */}
 
                             {/* 銀河パネル */}
                             <div
                                 className="galaxy-card"
                                 style={{ 
-                                    // scaleを追加済み
                                     transform: `rotate(${galaxy.rotate}) scale(${galaxy.scale})` 
                                 }}
                             >
-                                <img src="./image/logo.png" alt={galaxy.name} className="galaxy-image"
-                                    style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.7 }} />
-                                <div style={{ position: 'absolute', top: 10, left: 10, width: 20, height: 20, borderLeft: '2px solid #4facfe', borderTop: '2px solid #4facfe' }}></div>
+                                <img src="./image/logo.png" alt={galaxy.name} className="galaxy-image" />
+                                <div className="crystal-border-deco"></div>
                             </div>
 
                             <p className="galaxy-label">{galaxy.name.toUpperCase()} SYSTEM</p>

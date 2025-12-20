@@ -1,136 +1,187 @@
-/* CollectionScreen4.css - Final Version */
+/* CollectionScreen4.css - Final Responsive Version */
 
-/* --- ベーススタイル --- */
+/* --- 1. ベーススタイル --- */
 .s4-container {
   width: 100%;
   height: 100%;
   position: relative;
   background: transparent;
-  font-family: "Courier New", Courier, monospace;
   color: #fff;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding: 20px 40px;
+  padding: 0; /* ★変更: ヘッダーを端まで伸ばすため余白を削除 */
   box-sizing: border-box;
 }
 
-/* --- ヘッダーとタブ --- */
+/* --- 2. ヘッダー（MainScreenと統一） --- */
 .s4-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding-bottom: 10px;
+  align-items: center; /* 上下中央揃え */
+  padding: 20px 40px; /* ヘッダー内部に余白を持つ */
+  width: 100%;
+  box-sizing: border-box;
+  z-index: 100;
+  flex-shrink: 0;
+
+  /* 背景処理（MainScreenと同じ） */
+  background: linear-gradient(
+      to bottom, 
+      rgba(5, 10, 27, 0.95) 0%,   
+      rgba(5, 10, 27, 0.6) 60%,   
+      transparent 100%            
+  );
+  border-bottom: 1px solid rgba(79, 172, 254, 0.15);
+  backdrop-filter: blur(3px);
 }
 
 .s4-page-title {
-  font-size: 1.5rem;
-  letter-spacing: 0.1em;
+  font-family: serif;
+  font-size: 2rem;
+  font-weight: 400;
+  letter-spacing: 0.15em;
   margin: 0;
-  text-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
+  color: #ffffff;
+  /* 強い発光で視認性確保 */
+  text-shadow: 
+      0 0 10px rgba(79, 172, 254, 0.8),
+      0 0 20px rgba(79, 172, 254, 0.4);
 }
 
+/* --- タブエリア --- */
 .s4-tabs {
   display: flex;
-  gap: 20px;
+  gap: 40px; /* MainScreenと同じ間隔 */
 }
 
 .s4-tab-button {
-  background: none;
+  background: transparent;
   border: none;
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 1rem;
-  cursor: pointer;
-  padding: 5px 10px;
-  position: relative;
-  transition: all 0.3s;
+  color: rgba(255, 255, 255, 0.4);
   font-family: inherit;
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  position: relative;
+  padding: 10px 0;
+  transition: all 0.3s ease;
 }
 
 .s4-tab-button:hover {
-  color: #fff;
+  color: #ffffff;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
 }
 
+/* アクティブ時のスタイル */
 .s4-tab-button.active {
-  color: #4facfe;
-  text-shadow: 0 0 8px rgba(79, 172, 254, 0.8);
+  color: #ffffff;
+  font-weight: bold;
+  text-shadow: 0 0 15px rgba(79, 172, 254, 1);
 }
 
+/* 下線インジケーター */
 .s4-tab-indicator {
   position: absolute;
-  bottom: -11px;
+  bottom: 0;
   left: 0;
-  width: 0%;
+  width: 100%;
   height: 2px;
   background: #4facfe;
-  transition: width 0.3s ease;
   box-shadow: 0 0 10px #4facfe;
+  transform: scaleX(0); /* 非アクティブ時は隠す */
+  transition: transform 0.3s ease;
+  transform-origin: center;
 }
 
 .s4-tab-button.active .s4-tab-indicator {
-  width: 100%;
+  transform: scaleX(1); /* アクティブ時に伸びる */
 }
 
-/* --- コンテンツエリア --- */
+
+/* --- 3. コンテンツエリア --- */
 .s4-content-area {
   flex: 1;
   overflow-y: auto;
-  position: relative;
+  /* ★変更: コンテナの余白を消したので、ここで余白をとる */
+  padding: 20px 40px 50px 40px; 
+  
   scrollbar-width: thin;
   scrollbar-color: rgba(79, 172, 254, 0.5) transparent;
 }
 
-/* --- スターグリッド（棚） --- */
+/* スクロールバー装飾 */
+.s4-content-area::-webkit-scrollbar {
+  width: 6px;
+}
+.s4-content-area::-webkit-scrollbar-thumb {
+  background: rgba(79, 172, 254, 0.5);
+  border-radius: 3px;
+}
+
+
+/* --- 4. グリッドとカード --- */
 .s4-grid-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 30px;
-  padding: 20px 10px;
+  grid-template-columns: repeat(auto-fill, minmax(18vmin, 1fr));
+  gap: 4vmin;
+  padding-bottom: 50px;
 }
 
 .s4-star-card {
-  height: 180px;
+  position: relative;
+  aspect-ratio: 1 / 1; 
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
+  border-radius: 15px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  position: relative;
   transition: all 0.3s ease;
-  backdrop-filter: blur(2px);
 }
 
 .s4-star-card:hover {
-  background: rgba(79, 172, 254, 0.1);
-  border-color: rgba(79, 172, 254, 0.5);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.4);
   transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5), 0 0 20px rgba(79, 172, 254, 0.2);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 
-/* --- カード内のビジュアルエリア --- */
+.s4-card-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(79,172,254,0.2) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.s4-star-card:hover .s4-card-glow {
+  opacity: 1;
+}
+
 .s4-star-visual {
   position: relative;
-  width: auto;       /* 画像サイズに合わせて自動調整 */
-  height: auto;
-  min-height: 60px;  /* 星のみの場合の最低高さ */
-  margin-bottom: 15px;
+  width: 60%;
+  height: 60%;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 10px;
 }
 
-/* 通常の星（画像なし）のデザイン */
 .s4-core-star {
-  width: 20px;
-  height: 20px;
+  width: 2vmin;
+  height: 2vmin;
   background: #fff;
   border-radius: 50%;
-  box-shadow: 0 0 20px #fff, 0 0 40px #4facfe;
+  box-shadow: 0 0 10px #fff;
   z-index: 2;
 }
 
@@ -138,173 +189,79 @@
   position: absolute;
   width: 100%;
   height: 100%;
-  border: 1px solid rgba(79, 172, 254, 0.5);
+  border: 1px dashed rgba(255, 255, 255, 0.3);
   border-radius: 50%;
-  animation: spin 10s linear infinite;
+  animation: rotateRing 10s linear infinite;
 }
 
-.s4-star-card:hover .s4-core-star {
-  background: #a0e0ff;
-  box-shadow: 0 0 25px #a0e0ff, 0 0 50px #4facfe;
+@keyframes rotateRing {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
-/* --- カード内の写真（原石用） --- */
+/* 写真付きカード */
 .s4-card-img-container {
-  /* ★★ ここで写真のサイズを調整できます (例: 110px) ★★ */
-  width: 110px;
-  height: 110px;
-  
-  position: relative;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  border: 2px solid rgba(255,255,255,0.2);
 }
 
 .s4-card-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 50%;
-  border: 3px solid #ffd700; /* 原石なので金色の枠 */
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
-  z-index: 2;
-  transition: transform 0.3s ease;
 }
 
-.s4-star-card:hover .s4-card-img {
-  transform: scale(1.1); /* ホバーで少し拡大 */
-}
-
-/* 画像周りの回転リング */
-.s4-img-ring {
-  position: absolute;
-  top: -8px;
-  left: -8px;
-  right: -8px;
-  bottom: -8px;
-  border: 1px dashed rgba(255, 215, 0, 0.5);
-  border-radius: 50%;
-  animation: spin 20s linear infinite;
-  z-index: 1;
-}
-
-/* --- カードテキスト --- */
 .s4-star-name {
-  font-size: 1rem;
+  font-size: 1.8vmin;
   font-weight: bold;
-  margin: 0;
   letter-spacing: 1px;
-}
-
-.s4-star-date {
-  font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.5);
-  margin-top: 5px;
-}
-
-/* --- 星座ビュー --- */
-.s4-constellation-view {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: row;
-  cursor: pointer;
-}
-
-.s4-constellation-info {
-  margin-right: 40px;
-  text-align: right;
-}
-
-.s4-const-label {
-  color: #4facfe;
-  font-size: 0.8rem;
-  letter-spacing: 2px;
-  margin-bottom: 5px;
-}
-
-.s4-const-title {
-  font-size: 2.5rem;
+  text-align: center;
+  z-index: 2;
   margin: 0;
-  text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
 }
 
-.s4-const-sub {
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.4);
-  margin-top: 10px;
-}
-
-.s4-constellation-map {
-  width: 300px;
-  height: 300px;
-  border: 1px dashed rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.2);
-  transition: transform 0.5s;
-}
-
-.s4-constellation-view:hover .s4-constellation-map {
-  border-color: rgba(79, 172, 254, 0.5);
-  transform: scale(1.05);
-  background: rgba(0, 0, 0, 0.4);
-}
-
-.s4-constellation-svg {
-  width: 100%;
-  height: 100%;
-}
-
-.pulse-star {
-  animation: pulse 2s infinite ease-in-out;
-}
-
-/* --- モーダル --- */
+/* --- 5. 詳細モーダル --- */
 .s4-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.7);
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(5px);
-  z-index: 1000;
+  z-index: 2000;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .s4-modal-content {
-  width: 500px;
-  max-width: 90%;
-  background: rgba(11, 16, 38, 0.95);
-  border: 1px solid #4facfe;
-  border-radius: 8px;
-  padding: 30px;
+  width: 90%;
+  max-width: 600px;
+  background: rgba(15, 20, 35, 0.95);
+  border: 1px solid rgba(79, 172, 254, 0.3);
+  border-radius: 20px;
+  padding: 40px;
   position: relative;
-  box-shadow: 0 0 30px rgba(79, 172, 254, 0.3);
-  color: #fff;
+  box-shadow: 0 0 30px rgba(79, 172, 254, 0.15);
 }
 
 .s4-modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding-bottom: 15px;
   margin-bottom: 20px;
 }
 
 .s4-modal-type {
-  font-size: 0.8rem;
+  font-size: 1rem;
   color: #4facfe;
   letter-spacing: 2px;
+  text-transform: uppercase;
 }
 
 .s4-modal-close {
@@ -313,119 +270,53 @@
   color: #fff;
   font-size: 1.5rem;
   cursor: pointer;
-  transition: color 0.3s;
-}
-
-.s4-modal-close:hover {
-  color: #ff4d4d;
 }
 
 .s4-modal-title {
   font-size: 2rem;
-  margin: 0 0 15px 0;
+  margin: 0 0 10px 0;
+  font-family: serif;
 }
 
-.s4-tags-row {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.s4-tag-badge {
-  background: rgba(79, 172, 254, 0.1);
-  color: #4facfe;
-  padding: 4px 10px;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  border: 1px solid rgba(79, 172, 254, 0.3);
-}
-
-.s4-modal-body {
-  line-height: 1.8;
-  color: #e0e0e0;
-}
-
-/* モーダル内の画像エリア */
 .s4-modal-image-wrapper {
   width: 100%;
-  max-height: 400px; /* 詳細画面での画像を大きく */
-  margin-bottom: 20px;
+  height: 250px;
   overflow: hidden;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  margin-bottom: 15px;
 }
 
 .s4-modal-image {
   width: 100%;
-  height: auto;
-  object-fit: contain;
-  display: block;
-}
-
-/* --- 完了ボタン（原石用） --- */
-.s4-modal-footer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 15px;
-  margin-top: 20px;
+  height: 100%;
+  object-fit: cover;
 }
 
 .s4-complete-btn {
-  background: linear-gradient(135deg, #ffd700, #ffb900);
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
   border: none;
+  padding: 15px;
   border-radius: 30px;
-  padding: 12px 40px;
   color: #000;
-  font-family: inherit;
   font-weight: bold;
   font-size: 1rem;
-  letter-spacing: 2px;
   cursor: pointer;
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-  z-index: 10;
+  width: 100%;
+  margin-top: 20px;
+  transition: transform 0.2s;
 }
 
 .s4-complete-btn:hover {
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+  transform: scale(1.02);
+  box-shadow: 0 0 20px rgba(79, 172, 254, 0.4);
 }
 
-.s4-complete-btn:active {
-  transform: scale(0.95);
-}
-
-/* キラッと光るアニメーション */
-.s4-complete-btn::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%);
-  transform: rotate(45deg) translate(-150%, 0);
-  transition: transform 0.5s;
-}
-
-.s4-complete-btn:hover::after {
-  transform: rotate(45deg) translate(150%, 0);
-  transition: transform 0.5s;
-}
-
-/* --- 戻るボタン --- */
+/* 戻るボタン */
 .s4-back-btn {
   position: absolute;
   bottom: 30px;
   left: 40px;
-  background: transparent;
+  background: rgba(0, 0, 0, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.3);
   color: #fff;
   padding: 10px 20px;
@@ -435,34 +326,12 @@
   cursor: pointer;
   transition: all 0.3s;
   z-index: 100;
+  font-size: 0.9rem;
+  backdrop-filter: blur(5px);
 }
 
 .s4-back-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.2);
   border-color: #fff;
-  padding-left: 15px;
-}
-
-/* --- アニメーション --- */
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-@keyframes pulse {
-  0% { opacity: 0.5; r: 3; }
-  50% { opacity: 1; r: 5; }
-  100% { opacity: 0.5; r: 3; }
-}
-
-.fadeIn { animation: fadeIn 0.5s ease; }
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.scaleIn { animation: scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-@keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.9); }
-  to { opacity: 1; transform: scale(1); }
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }

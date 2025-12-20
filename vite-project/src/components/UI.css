@@ -1,0 +1,60 @@
+/* --- UI.css : 全画面共通のデザイン設定 --- */
+
+/* 1. 画面サイズ固定・スクロール完全禁止 */
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden; /* これで絶対にスクロールさせない */
+  box-sizing: border-box;
+  font-family: "Courier New", Courier, monospace;
+}
+
+/* 2. 宇宙の背景（全画面共通） */
+.ui-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  
+  /* ▼▼▼ 変更点：グラデーションから画像へ ▼▼▼ */
+  background-image: url('/image/background.png');
+  background-size: cover;        /* 縦横比を保って画面全体を覆う */
+  background-position: center;   /* 画像の中央を表示 */
+  background-repeat: no-repeat;  /* 繰り返さない */
+  
+  /* 画像が読み込まれるまでの保険として黒背景を指定 */
+  background-color: #000;
+  
+  z-index: -100; /* コンテンツの一番後ろへ */
+  pointer-events: none;
+}
+
+/* 3. キラキラ光る星のアニメーション
+   （写真の上で星が光る演出として残します。不要なら削除してください） 
+*/
+.ui-star {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  opacity: 0.8;
+  animation-name: ui-twinkle;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+}
+
+@keyframes ui-twinkle {
+  0% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 4px #fff; }
+  100% { opacity: 0.3; transform: scale(0.8); }
+}
+
+/* 4. コンテンツ配置エリア */
+.ui-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}

@@ -1,28 +1,19 @@
+/* InformationScreen.css */
+
 .container {
   width: 100%;
-  height: 100vh;
+  height: 100%; /* 100vh を削除 */
   position: relative;
-  padding: 0 40px;
+  padding: 0 5vmin; /* 左右の余白も可変に */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
-.gridBackground {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  /* Fixed syntax error: removed backticks and corrected comma separation */
-  background-image: 
-    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-  background-size: 40px 40px;
-  z-index: -1;
-}
+/* .gridBackground は削除（UI側にあるため） */
 
 .title {
   font-size: 1.4rem;
@@ -31,103 +22,87 @@
   letter-spacing: 10px;
   font-family: serif;
   transition: all 0.5s ease;
+  color: #fff;
 }
 
 .formArea {
   width: 100%;
   max-width: 680px;
   position: relative;
-  display: flex;
-  flex-direction: column;
+  z-index: 10;
 }
 
+/* ノードスタイル */
 .nodeWrapper {
-  display: flex;
-  align-items: flex-start;
   position: relative;
-  z-index: 2;
+  margin-bottom: 25px;
+  padding-left: 30px; /* space for the vertical line */
 }
 
 .nodePoint {
+  position: absolute;
+  left: 0;
+  top: 0;
   width: 18px;
   height: 18px;
+  background-color: #1a1f35;
+  border: 2px solid;
   border-radius: 50%;
-  flex-shrink: 0;
-  border: 3px solid; /* Note: You likely need a border-color here, defaults to current color */
-  background-color: #050a1b;
-  margin-right: 25px;
-  margin-top: 6px;
-  transition: all 0.5s ease;
+  z-index: 2;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.nodeBox {
-  flex: 1;
-  background-color: rgba(255, 255, 255, 0.02);
+.contentBox {
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
-  padding: 22px 28px;
-  backdrop-filter: blur(12px);
-  transition: all 0.3s ease;
-}
-
-.nodeHeader {
-  font-size: 0.8rem;
-  margin-bottom: 18px;
-  font-weight: bold;
-  letter-spacing: 3px;
-  opacity: 0.8;
-}
-
-.label {
-  display: block;
-  font-size: 0.75rem;
-  color: #777;
-  margin-bottom: 8px;
-  letter-spacing: 1px;
-}
-
-.input {
-  width: 100%;
-  background-color: transparent;
-  border: none;
-  /* Fixed: Converted JS object syntax to CSS syntax */
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-  padding: 8px 0;
-  color: #fff;
-  font-size: 1.1rem;
-  outline: none;
+  padding: 20px 25px;
+  backdrop-filter: blur(5px);
   transition: border 0.3s ease;
 }
 
-.textarea {
+.input, .textarea {
   width: 100%;
+  background-color: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.1rem;
+  outline: none;
+  font-family: serif;
+}
+
+.input {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 5px 0;
+}
+
+.textarea {
   background-color: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   padding: 12px;
-  color: #fff;
-  font-size: 0.95rem;
   min-height: 75px;
   max-height: 100px;
-  outline: none;
   resize: none;
 }
 
-/* Connecting line between nodes */
+/* Connecting line */
 .line {
   position: absolute;
   width: 2px;
-  height: 60px;
+  height: 100%; /* 親に合わせて伸びるように修正 */
   left: 8px;
-  top: 45px;
+  top: 18px;
   opacity: 0.4;
-  z-index: 1; /* Fixed: 'index' is not a valid property */
-  transition: all 0.5s ease;
+  z-index: 1;
+  background-color: #fff;
 }
 
 .propertyGrid {
   display: flex;
   gap: 30px;
+  flex-wrap: wrap; /* 画面が狭い時に折り返す */
 }
 
 .btnGrid {
@@ -139,45 +114,48 @@
 .selectionButton {
   padding: 6px 14px;
   border-radius: 18px;
-  border: 1px solid;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  color: #aaa;
   cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 0.75rem;
-  background: none;
+  font-size: 0.85rem;
+  transition: all 0.3s;
 }
 
 .toggleArea {
-  margin-top: 20px;
-  padding-top: 15px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
 }
 
 .toggleContent {
-  cursor: pointer;
-  font-size: 0.85rem;
   display: flex;
   align-items: center;
   gap: 10px;
-  transition: all 0.3s ease;
-}
-
-.toggleIcon {
-  font-size: 1.2rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: color 0.3s;
 }
 
 .submitWrapper {
-  text-align: center;
+  display: flex;
+  justify-content: center;
   margin-top: 40px;
 }
 
 .submitBtn {
-  padding: 14px 80px;
-  border-radius: 40px;
+  background: transparent;
   border: 1px solid;
-  background-color: rgba(255, 255, 255, 0.03);
-  font-size: 1.1rem;
-  letter-spacing: 6px;
+  padding: 12px 40px;
+  border-radius: 30px;
+  font-size: 1rem;
+  letter-spacing: 3px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s;
   font-family: serif;
+}
+
+.submitBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.05);
 }
