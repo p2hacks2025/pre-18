@@ -19,20 +19,32 @@ const InformationScreen = () => {
 
   const currentColor = tagColors[selectedTag] || '#fff';
 
-  const handleSubmit = (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title) return alert('名称を入力してください。');
-    const newItem = { 
-      id: Date.now(), 
-      title, 
-      memo, 
-      tags: [selectedTag], 
-      objectType, 
-      isPublic, 
-      date: new Date().toISOString() 
-    };
-    if (addItem) addItem(newItem);
-    navigate('/dashboard');
+
+    try {
+      // ★ ここでPythonにデータを送る！
+      const response = await fetch('http://127.0.0.1:5000/api/stones', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        // 今のバックエンドは title だけ受け取る仕様なので、まずは title を送る → 全部送るようにしたよん！
+        body: JSON.stringify({ title:title, memo:memo, tags:[selectedTag], objectType:objectType, isPublic: isPublic 
+        }),
+      });
+
+      if (response.ok) {
+        console.log('DB保存成功！');
+        navigate('/main'); // 保存したらメイン画面へ戻る
+      } else {
+        alert('保存に失敗しました');
+      }
+    } catch (error) {
+      console.error('通信エラー:', error);
+      alert('サーバーと通信できませんでした');
+    }
   };
 
   // Helper for dynamic button styles

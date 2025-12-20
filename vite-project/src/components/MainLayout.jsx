@@ -1,16 +1,61 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import './Navigation.css';
 
-const MainLayout = ({ items, addItem, updateItemStatus }) => {
+const MainLayout = () => {
+  // ★重要: ここでデータを管理します
+  const [items, setItems] = useState([]);
 
-  // 色や影など「動的に変わるスタイル」だけを生成する関数
-  const getDynamicBtnStyle = (color, isDisabled = false) => ({
-    boxShadow: `0 0 50px ${color}88`, // 色に応じた影
-    opacity: isDisabled ? 0.6 : 1,
-    cursor: isDisabled ? 'default' : 'pointer',
-    pointerEvents: isDisabled ? 'none' : 'auto' // 無効時はクリック不可に
-  });
+  // --- 1. 画面が開かれたら、Pythonからデータを取ってくる (GET) ---
+  useEffect(() => {
+    fetchItems();
+  }, []);
+
+  const fetchItems = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:5000/api/stones');
+      const data = await response.json();
+
+      if (data.success) {
+        // DBのデータ(snake_case)をReact用(camelCase)に変換してセット
+        const formattedItems = data.stones.map(item => ({
+          id: item.id,
+          title: item.title,
+          memo: item.memo,
+          tags: item.tags || [], // nullなら空配列にする
+          date: item.created_at,
+          
+          // ★DBの「星」か「星座」かを見て、React用のフラグを立てる
+          isGem: item.object_type === '星',            // 「星」なら原石扱い
+          isConstellation: item.object_type === '星座', // 「星座」なら星座扱い
+          isCompleted: false, // 必要ならDBにカラム追加（今回は初期値false）
+          image: null         // 画像URLがあればここに入れる
+        }));
+        setItems(formattedItems);
+      }
+    } catch (error) {
+      console.error("データの取得に失敗:", error);
+    }
+  };
+
+  // --- 2. データを追加する関数 (InformationScreen用) ---
+  // (ここはDB保存処理をInformationScreen側でやっているので、表示更新用)
+  const addItem = (newItem) => {
+    setItems(prev => [newItem, ...prev]);
+    // 念のため再取得しても良い
+    fetchItems(); 
+  };
+
+  // --- 3. データを更新する関数 (CollectionScreenの「完了」ボタン用) ---
+  const updateItem = (updatedItem) => {
+    // React上の見た目を即座に更新
+    setItems(prevItems => 
+      prevItems.map(item => item.id === updatedItem.id ? updatedItem : item)
+    );
+    
+    // ★発展課題: ここで本当は '/api/stones/update' みたいなAPIを呼んで
+    // DBの中身も書き換える必要がありますが、まずは「見た目の更新」まで！
+  };
 
   return (
     <div className="main-layout">
@@ -18,7 +63,7 @@ const MainLayout = ({ items, addItem, updateItemStatus }) => {
         
         <main className="main-content">
           {/* Outlet にデータを渡す */}
-          <Outlet context={{ items, addItem, updateItemStatus }} />
+          <Outlet context={{ items, addItem, updateItem }} />
         </main>
         
         <nav className="right-nav">

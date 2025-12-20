@@ -15,6 +15,7 @@ const AVAILABLE_CONSTELLATION_IMAGES = [
 const CollectionScreen4 = () => {
   // ▼変更点: アイテムを増やすのではなく「更新」するため updateItem を受け取ります
   // ※ 親コンポーネント(MainLayout)で updateItem 関数が提供されている必要があります
+  //つもり米、これDBからデータ受け渡すようにします。よろぴく。
   const { items = [], updateItem } = useOutletContext() || {};
   
   const navigate = useNavigate();
