@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import './CollectionScreen4.css';
 
@@ -13,79 +13,109 @@ const AVAILABLE_CONSTELLATION_IMAGES = [
 ];
 
 const CollectionScreen4 = () => {
-  // ▼変更点: アイテムを増やすのではなく「更新」するため updateItem を受け取ります
-  // ※ 親コンポーネント(MainLayout)で updateItem 関数が提供されている必要があります
-  //つもり米、これDBからデータ受け渡すようにします。よろぴく。
-  const { items = [], updateItem } = useOutletContext() || {};
-  
   const navigate = useNavigate();
+  // 親コンポーネントからのデータも受け取れますが、今回はDBから直接取得したデータを主とします
+  const { updateItem } = useOutletContext() || {}; 
+  
   const [activeTab, setActiveTab] = useState('star');
   const [selectedItem, setSelectedItem] = useState(null);
+  const [dbItems, setDbItems] = useState([]); // DBから取得したデータを格納
+  const [loading, setLoading] = useState(true);
+
+  // ▼▼▼ 1. DBからデータを取得 (GET) ▼▼▼
+  const fetchStones = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:5000/api/stones');
+      if (response.ok) {
+        const data = await response.json();
+        // 取得したデータには id が含まれていることを想定
+        setDbItems(data);
+      } else {
+        console.error('データの取得に失敗しました');
+      }
+    } catch (error) {
+      console.error('通信エラー:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchStones();
+  }, []);
 
   // ▼リスト表示ロジック
-  // isCompleted(星), isGem(原石), isConstellation(星座) のいずれかを持つアイテムを表示対象とする
-  const validItems = items.filter(item => item && (item.isCompleted || item.isGem || item.isConstellation));
+  // DBから取得した items を使用してフィルタリング
+  const validItems = dbItems.filter(item => item && (item.isCompleted || item.isGem || item.isConstellation));
   
-  /* --- サンプルデータ（データが空の時用） --- */
-  const sampleStar = { 
-    id: 'sample-s', title: 'チタタプ', memo: '初期アイデア', tags: ['sample'], isCompleted: true 
-  };
-  const sampleGem = {
-    id: 'gem-1', title: '未明の原石', memo: 'まだ磨かれていない石', tags: ['原石'], isGem: true 
-  };
-
-  // 表示用リスト
-  const displayItems = validItems.length > 0 ? validItems : [sampleStar, sampleGem];
+  // 表示用データ（データがない場合は空配列、あるいはローディング表示などを検討）
+  // 開発中は確認用にサンプルを残したい場合は以下のように空配列時のフォールバックを残してもOKです
+  const displayItems = validItems;
 
   // タブごとの出し分け
-  // STARタブ: 星(isCompleted) と 原石(isGem) を表示
-  // CONSTELLATIONタブ: 星座(isConstellation) を表示
   const filteredDisplayItems = displayItems.filter(item => {
     if (activeTab === 'star') {
-      return item.isGem || item.isCompleted;
+      return item.isGem || item.isCompleted; // 原石 または 星
     } else {
-      return item.isConstellation;
+      return item.isConstellation; // 星座
     }
   });
 
-  // ▼▼▼ 修正: 完了ボタンの処理 ▼▼▼
-  const handleComplete = () => {
+  // ▼▼▼ 2. 完了ボタンの処理 (UPDATE/PUT) ▼▼▼
+  const handleComplete = async () => {
     if (!selectedItem) return;
 
     if (selectedItem.isGem) {
-      // ========================================================
-      // 【原石】の完了 → ランダム画像を貼り付けて【星座】へ変化
-      // ========================================================
-
       // 1. 画像をランダムに選出
       const randomIndex = Math.floor(Math.random() * AVAILABLE_CONSTELLATION_IMAGES.length);
       const selectedImage = AVAILABLE_CONSTELLATION_IMAGES[randomIndex];
 
       // 2. 更新用データを作成
-      // 原石フラグを消し、星座フラグを立て、画像を付与する
-      const updatedItem = {
+      const updatedData = {
         ...selectedItem,
         isGem: false,           // 原石卒業
         isConstellation: true,  // 星座へ昇格
-        image: selectedImage,   // ★ここでランダム写真を貼る
+        image: selectedImage,   // 画像パスを保存
         date: new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '.'),
         memo: selectedItem.memo + '\n(観測完了により星座として登録されました)',
       };
 
-      // 3. データを更新
-      if (typeof updateItem === 'function') {
-        updateItem(updatedItem); // 親コンポーネントのステートを更新
-        alert(`原石「${selectedItem.title}」が輝き出し、星座に変わりました！\n（CONSTELLATIONタブへ移動しました）`);
-      } else {
-        console.warn('updateItem function is not received.');
-        // テスト動作確認用（本番では消して構いません）
-        alert(`【テスト動作】本来はここでデータが更新されます。\n選ばれた画像: ${selectedImage}`);
+      try {
+        // DBへ更新リクエストを送信 (PUTメソッドを想定)
+        // エンドポイントは個別のIDを指定: /api/stones/<id>
+        const response = await fetch(`http://127.0.0.1:5000/api/stones/${selectedItem.id}`, {
+          method: 'PUT', // Python側でPUTメソッドを受け取るように設定してください
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedData),
+        });
+
+        if (response.ok) {
+          alert(`原石「${selectedItem.title}」が輝き出し、星座に変わりました！`);
+          
+          // ローカルの表示を更新 (再fetchするか、stateを直接書き換える)
+          setDbItems(prevItems => 
+            prevItems.map(item => (item.id === selectedItem.id ? updatedData : item))
+          );
+          
+          // 親コンポーネントへの通知が必要ならここで行う
+          if (typeof updateItem === 'function') {
+            updateItem(updatedData);
+          }
+
+          setSelectedItem(null); // モーダルを閉じる
+          setActiveTab('constellation'); // 星座タブへ移動してあげる
+
+        } else {
+          alert('データの更新に失敗しました');
+        }
+      } catch (error) {
+        console.error('更新通信エラー:', error);
+        alert('サーバーと通信できませんでした');
       }
-      
-      setSelectedItem(null); // モーダルを閉じる
 
     } else if (selectedItem.isConstellation) {
-      // 星座の完了ボタン（必要であればアーカイブなどの処理）
       alert('この星座は既に観測済みです。');
     }
   };
@@ -116,17 +146,19 @@ const CollectionScreen4 = () => {
       {/* --- コンテンツエリア --- */}
       <div className="s4-content-area">
         <div className="s4-grid-container fadeIn">
-            {filteredDisplayItems.length === 0 ? (
+            {loading ? (
+              <div style={{color: '#999', marginTop: '50px'}}>LOADING DATA...</div>
+            ) : filteredDisplayItems.length === 0 ? (
               <div style={{color: '#999', marginTop: '50px'}}>NO DATA FOUND</div>
             ) : (
               filteredDisplayItems.map((item, index) => {
                 if (!item) return null;
+                // キーにはユニークなIDを使用するのがベストです
                 return (
-                  <div key={index} className="s4-star-card" onClick={() => setSelectedItem(item)}>
+                  <div key={item.id || index} className="s4-star-card" onClick={() => setSelectedItem(item)}>
                       <div className="s4-card-glow"></div>
                       
                       <div className="s4-star-visual">
-                      {/* 画像がある場合、または星座の場合は画像表示を優先 */}
                       {item.image ? (
                           <div className="s4-card-img-container">
                               <img src={item.image} alt={item.title} className="s4-card-img" />
@@ -145,7 +177,6 @@ const CollectionScreen4 = () => {
 
                       <p className="s4-star-name">{item.title}</p>
                       
-                      {/* 原石・星座・星でラベルを変える */}
                       <span style={{fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)'}}>
                         {item.isGem ? 'RAW GEM' : (item.isConstellation ? 'CONSTELLATION' : 'STAR')}
                       </span>
@@ -177,9 +208,10 @@ const CollectionScreen4 = () => {
             </h2>
             
             <div className="s4-tags-row">
-              {selectedItem.tags?.map((tag, i) => (
+              {/* tagsが文字列か配列かで処理を分ける安全策 */}
+              {Array.isArray(selectedItem.tags) ? selectedItem.tags.map((tag, i) => (
                 <span key={i} className="s4-tag-badge">#{tag}</span>
-              ))}
+              )) : <span className="s4-tag-badge">#{selectedItem.tags}</span>}
             </div>
 
             <div className="s4-modal-body">
@@ -188,13 +220,10 @@ const CollectionScreen4 = () => {
                     <img src={selectedItem.image} alt={selectedItem.title} className="s4-modal-image" />
                  </div>
                )}
-               <p>{selectedItem.memo}</p>
+               <p style={{whiteSpace: 'pre-wrap'}}>{selectedItem.memo}</p>
             </div>
 
             <div className="s4-modal-footer">
-               {/* 原石(isGem)の場合のみ完了ボタンを表示 
-                  星座完了時に何もアクションしないならボタンは消すか、「確認」のみにする
-               */}
                {selectedItem.isGem ? (
                  <button className="s4-complete-btn" onClick={handleComplete}>
                     ✦ AWAKEN (完了して星座へ) ✦
