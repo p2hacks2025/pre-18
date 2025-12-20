@@ -1,89 +1,77 @@
 import os
 import psycopg2
 from psycopg2.extras import RealDictCursor
-# auth_logic.pyから接続関数を読み込む代わりに、ここで定義するか、auth_logic側も同様に書き換える必要があります
-# 今回は一番確実な「このファイル内で接続先を切り替える」方法で書きます
+from auth_logic import get_connection
 
-def get_connection():
-    """環境変数があればRender(本番)、なければローカルのDBに接続する"""
-    # Renderの管理画面で設定する「DATABASE_URL」を読み込む
-    dsn = os.environ.get('DATABASE_URL')
-    
-    if dsn:
-        # 本番環境（Render）
-        return psycopg2.connect(dsn)
-    else:
-        # ローカル環境（あなたのPC）
-        # ※もしauth_logic.pyの接続設定を使いたい場合は、ここを元に戻してください
-        return psycopg2.connect(
-            host="localhost",
-            database="your_db_name", # ここは自分のDB名に合わせてください
-            user="postgres",
-            password="your_password"
-        )
+# 修正前：全部取得
+# cur.execute("SELECT * FROM stones ORDER BY id DESC")
 
-def register_stone(title, memo, tags, object_type, is_public):
-    """詳細データを含めて原石を保存する"""
+# 修正後：自分の石 か 公開されている石 だけ取得
+
+
+# ▼▼▼ usernameを受け取って保存するように変更
+def register_stone(title, memo, tags, object_type, is_public, username):
     conn = None
     cur = None
     try:
         conn = get_connection()
         cur = conn.cursor()
-        
+        # さっき設定した username 列にデータを入れます
         cur.execute(
             """
-            INSERT INTO stones (title, memo, tags, object_type, is_public)
-            VALUES (%s, %s, %s, %s, %s)
+            INSERT INTO stones (title, memo, tags, object_type, is_public, username)
+            VALUES (%s, %s, %s, %s, %s, %s)
             """,
-            (title, memo, tags, object_type, is_public)
+            (title, memo, tags, object_type, is_public, username)
         )
         conn.commit()
         return {"success": True, "message": "原石を保存しました！"}
-        
     except Exception as e:
-        print(f"Error: {e}")
-        return {"success": False, "message": "保存に失敗しました"}
+        print(e)
+        return {"success": False, "message": "保存失敗"}
     finally:
         if cur: cur.close()
         if conn: conn.close()
 
-def get_all_stones():
-    """全ての原石を取得する"""
+# ▼▼▼ 自分のデータ(username一致) か 公開データ(is_public) だけ取得
+def get_all_stones(current_user):
     conn = None
     cur = None
     try:
         conn = get_connection()
         cur = conn.cursor(cursor_factory=RealDictCursor)
         
-        cur.execute("SELECT * FROM stones ORDER BY id DESC")
+        # ここでデータの選り分けをしています
+        query = """
+            SELECT * FROM stones 
+            WHERE username = %s OR is_public = true 
+            ORDER BY id DESC
+        """
+        cur.execute(query, (current_user,))
+        
         stones = cur.fetchall()
         return {"success": True, "stones": stones}
-        
     except Exception as e:
-        print(f"Error: {e}")
+        print(e)
         return {"success": False, "stones": []}
     finally:
         if cur: cur.close()
         if conn: conn.close()
-
+        
 def update_stone_status(stone_id, object_type, image):
-    """星を星座に進化させる（更新）"""
     conn = None
     cur = None
     try:
         conn = get_connection()
         cur = conn.cursor()
-        
         cur.execute(
             "UPDATE stones SET object_type = %s, image = %s WHERE id = %s",
             (object_type, image, stone_id)
         )
         conn.commit()
-        return {"success": True, "message": "進化しました！"}
-        
+        return {"success": True}
     except Exception as e:
-        print(f"Error: {e}")
-        return {"success": False, "message": "進化に失敗しました"}
+        return {"success": False}
     finally:
         if cur: cur.close()
         if conn: conn.close()

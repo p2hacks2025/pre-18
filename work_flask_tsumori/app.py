@@ -1,15 +1,12 @@
+import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from auth_logic import register_user, login_user
-# register_stone の引数が増えたので、新しい stone_logic を使います
-from stone_logic import register_stone, get_all_stones,update_stone_status
-
+from stone_logic import register_stone, get_all_stones, update_stone_status
 
 app = Flask(__name__)
-# どのURLからでも、どんな方法(PUT等)でも許可する設定
 CORS(app, resources={r"/*": {"origins": "*", "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]}})
 
-# --- ユーザー認証系 ---
 @app.route('/api/signup', methods=['POST'])
 def signup():
     data = request.json
@@ -22,35 +19,34 @@ def login():
     result = login_user(data.get('username'), data.get('password'))
     return jsonify(result), (200 if result["success"] else 401)
 
-# --- 原石（アイデア）系 ---
-
 @app.route('/api/stones', methods=['GET'])
 def get_stones():
-    result = get_all_stones()
+    # URLから ?user=〇〇 を受け取って logic に渡す
+    current_user = request.args.get('user')
+    result = get_all_stones(current_user)
     return jsonify(result), 200
 
 @app.route('/api/stones', methods=['POST'])
 def add_stone():
     data = request.json
-    # Reactから送られてきた全てのデータを取り出す
     result = register_stone(
         title=data.get('title'),
         memo=data.get('memo'),
-        tags=data.get('tags'),         # 配列のままでOK
-        object_type=data.get('objectType'), # React側の名前(camelCase)に注意
-        is_public=data.get('isPublic')
+        tags=data.get('tags'),
+        object_type=data.get('objectType'),
+        is_public=data.get('isPublic'),
+        username=data.get('username') # ここで名前を受け取る
     )
     return jsonify(result), (200 if result["success"] else 400)
 
+# 本質的なRESTful API：URLにIDを含める
 @app.route('/api/stones/<int:stone_id>', methods=['PUT'])
 def update_stone(stone_id):
     data = request.json
-    result = update_stone_status(
-        stone_id,
-        data.get('object_type'),
-        data.get('image')
-    )
+    result = update_stone_status(stone_id, data.get('objectType'), data.get('image'))
     return jsonify(result), (200 if result["success"] else 400)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    # 本質：Renderでは環境変数PORTが指定される。なければローカル用の5000を使う。
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
