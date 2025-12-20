@@ -1,4 +1,3 @@
-
 import os
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -6,63 +5,75 @@ from auth_logic import get_connection
 
 def register_stone(title, memo, tags, object_type, is_public, username):
     conn = None
-    cur = None
     try:
         conn = get_connection()
         cur = conn.cursor()
+        
+        # ユーザー名が空なら 'Guest' に変換
+        safe_user = username if username else 'Guest'
+        
+        # どんな状況でもエラーにならないSQL
         cur.execute(
             """
-            INSERT INTO stones (title, memo, tags, object_type, is_public, username)
-            VALUES (%s, %s, %s, %s, %s, %s)
+            INSERT INTO stones (title, memo, tags, object_type, is_public, username, participants)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
             """,
-            (title, memo, tags, object_type, is_public, username)
+            (title, memo, tags, object_type, is_public, safe_user, [safe_user])
         )
         conn.commit()
-        return {"success": True, "message": "原石を保存しました！"}
+        return {"success": True, "message": "保存成功"}
     except Exception as e:
-        print(e)
+        print(f"DB Error: {e}")
         return {"success": False, "message": "保存失敗"}
     finally:
-        if cur: cur.close()
         if conn: conn.close()
 
 def get_all_stones(current_user):
     conn = None
-    cur = None
     try:
         conn = get_connection()
         cur = conn.cursor(cursor_factory=RealDictCursor)
         
-        query = """
+        safe_user = current_user if current_user else 'Guest'
+
+        # 自分、公開、参加中、全部取得
+        cur.execute("""
             SELECT * FROM stones 
-            WHERE username = %s OR is_public = true 
+            WHERE username = %s OR is_public = true OR %s = ANY(participants)
             ORDER BY id DESC
-        """
-        cur.execute(query, (current_user,))
+        """, (safe_user, safe_user))
         
-        stones = cur.fetchall()
-        return {"success": True, "stones": stones}
+        return {"success": True, "stones": cur.fetchall()}
     except Exception as e:
-        print(e)
         return {"success": False, "stones": []}
     finally:
-        if cur: cur.close()
         if conn: conn.close()
-        
+
+# 更新機能（そのまま）
 def update_stone_status(stone_id, object_type, image):
     conn = None
-    cur = None
     try:
         conn = get_connection()
         cur = conn.cursor()
-        cur.execute(
-            "UPDATE stones SET object_type = %s, image = %s WHERE id = %s",
-            (object_type, image, stone_id)
-        )
+        cur.execute("UPDATE stones SET object_type = %s, image = %s WHERE id = %s", (object_type, image, stone_id))
         conn.commit()
         return {"success": True}
-    except Exception as e:
+    except:
         return {"success": False}
     finally:
-        if cur: cur.close()
+        if conn: conn.close()
+
+# 参加機能（そのまま）
+def join_stone(stone_id, username):
+    conn = None
+    try:
+        conn = get_connection()
+        cur = conn.cursor()
+        safe_user = username if username else 'Guest'
+        cur.execute("UPDATE stones SET participants = array_append(participants, %s) WHERE id = %s", (safe_user, stone_id))
+        conn.commit()
+        return {"success": True}
+    except:
+        return {"success": False}
+    finally:
         if conn: conn.close()
