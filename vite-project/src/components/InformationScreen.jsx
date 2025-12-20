@@ -38,7 +38,7 @@ const handleSubmit = async (e) => {
 
     try {
       // 2. Python(DB)に送る
-      const response = await fetch('http://127.0.0.1:5000/api/stones', {
+      const response = await fetch('https://pre-18-3r22.onrender.com/api/stones', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
