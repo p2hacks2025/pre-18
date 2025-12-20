@@ -32,7 +32,7 @@ const LoginForm = ({ onLogin }) => {
     setError('');
 
     // 送信するデータの準備
-    const endpoint = mode === 'signup' ? 'http://127.0.0.1:5000/api/signup' : 'http://127.0.0.1:5000/api/login';
+    const endpoint = mode === 'signup' ? 'https://pre-18-3r22.onrender.com/api/signup' : 'https://pre-18-3r22.onrender.com/api/login';
     const postData = mode === 'signup' 
       ? { username, email, password } 
       : { username, password };

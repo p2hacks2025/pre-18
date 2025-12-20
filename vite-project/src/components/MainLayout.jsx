@@ -13,7 +13,7 @@ const MainLayout = () => {
 
   const fetchItems = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/stones');
+      const response = await fetch('https://pre-18-3r22.onrender.com/api/stones');
       const data = await response.json();
 
       if (data.success) {
@@ -54,7 +54,7 @@ const MainLayout = () => {
 
     //Pythonに報告
     try {
-      await fetch(`http://127.0.0.1:5000/api/stones/${updatedItem.id}`, {
+      await fetch(`https://pre-18-3r22.onrender.com/api/stones/${updatedItem.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
