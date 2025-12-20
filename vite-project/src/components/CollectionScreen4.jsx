@@ -10,6 +10,12 @@ const AVAILABLE_CONSTELLATION_IMAGES = [
   '/image/Otome.png',
   '/image/Ousi.png',
   '/image/Shi.png',
+  '/image/Ite.png',
+  '/image/Mizugame.png',
+  '/image/Sasori.png',
+  '/image/Yagi.png',
+  '/image/Tenbin.png',
+  '/image/Uo.png',
 ];
 
 const CollectionScreen4 = () => {

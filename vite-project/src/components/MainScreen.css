@@ -1,318 +1,254 @@
-/* --- 右上の切り替えボタン --- */
+/* --- MainScreen.css : 完成版 --- */
 
-.top-right-control {
-
-    position: absolute;
-
-    top: 30px;
-
-    right: 40px;
-
-    z-index: 100;
-
-}
-
-
-
-.mode-toggle-btn {
-
-    background: rgba(11, 16, 38, 0.6);
-
-    border: 1px solid #4facfe;
-
-    color: #4facfe;
-
-    padding: 10px 20px;
-
-    border-radius: 30px;
-
-    cursor: pointer;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 10px;
-
-    transition: all 0.3s ease;
-
-    backdrop-filter: blur(5px);
-
-    font-family: monospace;
-
-    letter-spacing: 1px;
-
-}
-
-
-
-.mode-toggle-btn:hover {
-
-    background: rgba(79, 172, 254, 0.2);
-
-    box-shadow: 0 0 15px rgba(79, 172, 254, 0.4);
-
-}
-
-
-
-.mode-toggle-btn.active {
-
-    background: rgba(79, 172, 254, 0.2);
-
-    border-color: #fff;
-
-    color: #fff;
-
-}
-
-
-
-.mode-indicator {
-
-    width: 10px;
-
-    height: 10px;
-
-    background: #4facfe;
-
-    border-radius: 50%;
-
-    box-shadow: 0 0 10px #4facfe;
-
-    transition: 0.3s;
-
-}
-
-
-
-.mode-toggle-btn.active .mode-indicator {
-
-    background: #ff0055; /* 他人モードの時は赤っぽくするなど */
-
-    box-shadow: 0 0 10px #ff0055;
-
-}
-
-
-
-/* --- 他人の宇宙リスト表示エリア --- */
-
-.universe-list-view {
-
+/* 1. 全体レイアウト */
+.universe-container {
     width: 100%;
-
     height: 100%;
-
-    display: flex;
-
-    justify-content: center;
-
-    align-items: center;
-
-    padding-top: 60px; /* タイトル分の余白 */
-
-    z-index: 10;
-
     position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* 親UIに合わせる */
+}
 
+/* 2. ヘッダー（CollectionScreen風・文字視認性強化） */
+.main-header {
+    display: flex;
+    justify-content: space-between; /* タイトル左、タブ右 */
+    align-items: center;            /* 上下中央揃え */
+    padding: 20px 40px;
+    width: 100%;
+    box-sizing: border-box;
+    z-index: 100;
+    
+    /* 文字を見やすくするための背景処理（グラデーション＋ぼかし） */
+    background: linear-gradient(
+        to bottom, 
+        rgba(5, 10, 27, 0.95) 0%,   
+        rgba(5, 10, 27, 0.6) 60%,   
+        transparent 100%            
+    );
+    border-bottom: 1px solid rgba(79, 172, 254, 0.15);
+    backdrop-filter: blur(3px);
+}
+
+/* ヘッダータイトル */
+.main-header-title {
+    font-family: serif;
+    font-size: 2rem;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    margin: 0;
+    color: #ffffff;
+    /* 強い発光で視認性確保 */
+    text-shadow: 
+        0 0 10px rgba(79, 172, 254, 0.8),
+        0 0 20px rgba(79, 172, 254, 0.4);
+}
+
+/* ヘッダータブエリア */
+.main-header-tabs {
+    display: flex;
+    gap: 40px;
+}
+
+/* タブボタン */
+.header-tab-btn {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.4);
+    font-family: inherit;
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    position: relative;
+    padding: 10px 0;
+    transition: all 0.3s ease;
+}
+
+.header-tab-btn:hover {
+    color: #ffffff;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+}
+
+/* アクティブ時のスタイル */
+.header-tab-btn.active {
+    color: #ffffff;
+    font-weight: bold;
+    text-shadow: 0 0 15px rgba(79, 172, 254, 1);
+}
+
+/* 下線インジケーター */
+.header-tab-indicator {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: #4facfe;
+    box-shadow: 0 0 10px #4facfe;
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+    transform-origin: center;
+}
+
+.header-tab-btn.active .header-tab-indicator {
+    transform: scaleX(1);
 }
 
 
+/* 3. グローバル宇宙リスト（視認性強化版） */
+.universe-list-view {
+    flex: 1;
+    overflow-y: auto;
+    padding: 40px;
+    width: 100%;
+    box-sizing: border-box;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(79, 172, 254, 0.5) transparent;
+}
 
 .user-grid {
-
-    display: flex;
-
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 30px;
-
-    flex-wrap: wrap;
-
-    justify-content: center;
-
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
-
-
+/* ユーザーカード */
 .user-card {
-
-    width: 200px;
-
-    height: 250px;
-
-    background: rgba(255, 255, 255, 0.05);
-
-    border: 1px solid rgba(255, 255, 255, 0.2);
-
-    border-radius: 10px;
-
-    padding: 20px;
-
+    /* 背景を暗くして文字をくっきりさせる */
+    background: rgba(10, 15, 30, 0.85); 
+    border: 1px solid rgba(79, 172, 254, 0.3);
+    border-radius: 15px;
+    padding: 25px;
+    
     display: flex;
-
     flex-direction: column;
-
     align-items: center;
-
     justify-content: center;
-
+    text-align: center;
+    
     cursor: pointer;
-
-    transition: 0.3s;
-
-    position: relative;
-
-    overflow: hidden;
-
-    color: #fff;
-
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
 }
-
-
 
 .user-card:hover {
-
-    transform: translateY(-10px);
-
-    background: rgba(79, 172, 254, 0.1);
-
+    background: rgba(10, 15, 30, 0.95);
     border-color: #4facfe;
-
-    box-shadow: 0 0 20px rgba(79, 172, 254, 0.3);
-
+    transform: translateY(-5px);
+    box-shadow: 0 0 20px rgba(79, 172, 254, 0.4);
 }
-
-
 
 .user-planet-icon {
-
     width: 60px;
-
     height: 60px;
-
-    background: radial-gradient(circle at 30% 30%, #4facfe, #0b1026);
-
+    background: radial-gradient(circle at 30% 30%, #4facfe, #00f2fe);
     border-radius: 50%;
-
-    margin-bottom: 20px;
-
-    box-shadow: 0 0 15px rgba(79, 172, 254, 0.5);
-
+    margin-bottom: 15px;
+    box-shadow: 0 0 15px rgba(79, 172, 254, 0.6);
 }
-
-
 
 .user-card h3 {
-
+    color: #ffffff;
+    font-size: 1.5rem;
     margin: 0 0 10px 0;
-
-    font-size: 1.2rem;
-
+    font-family: serif;
     letter-spacing: 2px;
-
+    text-shadow: 0 0 10px rgba(79, 172, 254, 0.8);
 }
-
-
 
 .user-card p {
+    color: #e0e0e0;
+    font-size: 1rem;
+    line-height: 1.5;
+    margin: 0;
+    font-family: sans-serif;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
 
-    font-size: 0.8rem;
-
-    color: #ccc;
-
-    text-align: center;
-
+.scan-line {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(79, 172, 254, 0.5), transparent);
+    margin-top: 15px;
+    opacity: 0.5;
 }
 
 
-
-/* --- 探索中の「戻るボタン」 --- */
-
-.back-to-list-btn {
-
-    position: absolute;
-
-    top: 100px;
-
-    left: 40px;
-
-    background: transparent;
-
-    border: 1px solid rgba(255,255,255,0.5);
-
-    color: #fff;
-
-    padding: 8px 16px;
-
-    cursor: pointer;
-
-    z-index: 50;
-
-    font-family: monospace;
-
-    transition: 0.3s;
-
+/* 4. 銀河表示（My Universe） */
+.universe-canvas {
+    flex: 1;
+    position: relative;
+    width: 100%;
+    height: 100%;
 }
 
-
-
-.back-to-list-btn:hover {
-
-    background: rgba(255,255,255,0.1);
-
-    border-color: #fff;
-
-}
 .galaxy-card {
-    /* ▼ ここで銀河の基本サイズを決定します */
-    width: 150px;  /* ここを小さくすると全体が小さくなります */
-    height: 150px; /* widthと同じ値にしてください */
-
-    /* 以下は配置や動きの設定 */
+    width: 18vmin;  
+    height: 18vmin; 
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
-    
-    /* 回転や拡大縮小（scale）のアニメーションを滑らかにする */
     transition: transform 0.5s ease; 
 }
 
-/* MainScreen.css */
+.galaxy-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    opacity: 0.9;
+    filter: drop-shadow(0 0 10px rgba(79, 172, 254, 0.3));
+}
 
 .galaxy-label {
-    color: #ffffff;             /* 文字を真っ白に */
-    font-weight: bold;          /* 少し太く */
-    text-shadow: 
-        0 0 5px #4facfe,        /* 青い発光 */
-        0 0 10px #4facfe;       /* 強めの発光 */
-    letter-spacing: 1px;        /* 文字間隔を広げて読みやすく */
-    margin-top: 10px;           /* クリスタルとの距離 */
-    font-size: 0.9rem;          /* サイズ微調整 */
+    color: #ffffff;
+    font-weight: bold;
+    text-shadow: 0 0 5px #4facfe, 0 0 10px #4facfe;
+    letter-spacing: 1px;
+    margin-top: 10px;
+    font-size: 2vmin;
 }
 
-/* SF通知バブルの文字も同様に見やすく */
-.sf-bubble-text {
-    color: #ccffff;
-    text-shadow: 0 0 3px rgba(0,0,0, 0.8); /* こちらは逆に黒い影で読みやすく */
-    font-weight: 500;
+
+/* 5. ナビゲーション・その他 */
+.back-to-list-btn {
+    position: absolute;
+    bottom: 30px;
+    left: 40px;
+    z-index: 200;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s;
+    backdrop-filter: blur(5px);
 }
 
-/* ★修正: クリスタルカードのサイズを固定し、大きすぎず小さすぎないサイズに */
-.galaxy-card {
-  width: 140px;  /* 固定幅 */
-  height: 140px; /* 固定高さ */
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* 背景色の削除（画像を目立たせるため） */
-  background: transparent; 
-  transition: transform 0.3s, filter 0.3s;
+.back-to-list-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: #fff;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
-.galaxy-card:hover {
-  transform: scale(1.1) rotate(0deg) !important;
-  /* ▼ 以下の行が「光る（青白い影を落とす）」効果です */
-  filter: drop-shadow(0 0 15px rgba(79, 172, 254, 0.6));
+/* 星のエフェクト */
+.twinkle-star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.8;
+    pointer-events: none;
+    animation: twinkle-anim linear infinite;
+}
+
+@keyframes twinkle-anim {
+    0% { opacity: 0.3; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 4px #fff; }
+    100% { opacity: 0.3; transform: scale(0.8); }
 }
