@@ -1,23 +1,60 @@
 import React, { useState, useEffect } from 'react';
+import { useOutletContext, useNavigate } from 'react-router-dom';
 import './InGalaxy.css'; // 新しく作ったCSS
 import './ShootingStar.css'; 
 
-const Screen3 = () => {
-  // --- データ管理 ---
-  const [items, setItems] = useState([
-    { id: 1, theme: 'star', title: '一番星', date: '2025-12-01', comment: 'とても明るい星でした。', tags: ['天体', '日常'], isCompleted: false, top: '20%', left: '15%' },
-    { id: 2, theme: 'star', title: '北極星', date: '2025-12-05', comment: '道標になる星です。', tags: ['天体', '風景'], isCompleted: false, top: '60%', left: '10%' },
-    { id: 3, theme: 'star', title: 'シリウス', date: '2025-12-10', comment: '冬のダイヤモンドの一つ。', tags: ['夜景'], isCompleted: false, top: '30%', left: '70%' },
-    { id: 4, theme: 'star', title: 'ベガ', date: '2025-12-15', comment: '夏の大三角形。', tags: ['自然'], isCompleted: false, top: '75%', left: '80%' },
-    { id: 5, theme: 'constellation', title: 'オリオン座', date: '2025-12-02', comment: '三つ星が特徴的です。', tags: ['天体', '夜景'], isCompleted: false, top: '15%', left: '45%' },
-    { id: 6, theme: 'constellation', title: 'カシオペア座', date: '2025-12-08', comment: 'Wの形をしています。', tags: ['天体'], isCompleted: false, top: '50%', left: '55%' },
-  ]);
+const InGalaxy = () => {
+  const navigate = useNavigate();
 
+  // ------------------------------------------------------------
+  // 1. バックエンド連携: 親コンポーネントからデータと取得関数をもらう
+  // ------------------------------------------------------------
+  // contextがnullの場合に備えてデフォルト値を設定
+  const { items: dbItems = [], fetchItems } = useOutletContext() || {};
+
+  // 表示用のState (DBデータ + UI用座標などを保持)
+  const [displayItems, setDisplayItems] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
+
+  // ------------------------------------------------------------
+  // 2. データ初期化と変換 (DB形式 -> UI形式)
+  // ------------------------------------------------------------
+  useEffect(() => {
+    // 画面ロード時に最新データを取得
+    if (fetchItems) {
+      fetchItems();
+    }
+  }, [fetchItems]);
+
+  useEffect(() => {
+    // DBからデータが届いたら、UIが表示しやすい形に変換してstateに入れる
+    if (dbItems && dbItems.length > 0) {
+      const formattedItems = dbItems.map((item, index) => ({
+        ...item,
+        // UIに必要なフィールドへのマッピング
+        theme: item.isGem ? 'star' : 'constellation', // 原石なら星、それ以外なら星座
+        comment: item.memo || 'No details.',          // memoをcommentとして扱う
+        tags: Array.isArray(item.tags) ? item.tags : (item.tags ? [item.tags] : []), // タグを配列化
+        date: item.date || 'Unknown Date',
+        
+        // 座標がない場合はランダム配置 (バックエンドのロジックを採用しつつUI用に保存)
+        // ※一度決まったら再レンダリングで動かないように本当は固定すべきですが、今回は簡易実装
+        top: item.top || `${Math.random() * 70 + 10}%`, 
+        left: item.left || `${Math.random() * 80 + 10}%`,
+      }));
+      setDisplayItems(formattedItems);
+    } else {
+       // データがない場合、空にしておく（あるいはサンプルを表示してもOK）
+       setDisplayItems([]);
+    }
+  }, [dbItems]);
+
+  // ------------------------------------------------------------
+  // 3. アニメーション制御 (フロントエンドのコードそのまま)
+  // ------------------------------------------------------------
   const [showShootingStar, setShowShootingStar] = useState(false);
   const [meteors, setMeteors] = useState([]);
 
-  // --- アニメーション制御 ---
   useEffect(() => {
     const timer = setTimeout(() => {
       const random = Math.random() * 100;
@@ -46,19 +83,45 @@ const Screen3 = () => {
     setTimeout(() => setMeteors([]), 5000);
   };
 
+  // ------------------------------------------------------------
+  // 4. UIイベント (完了ボタンなど)
+  // ------------------------------------------------------------
   const handleComplete = (id) => {
-    setItems(items.map(item => 
+    // 見た目だけ即座に変化させる (本来はここでAPI通信 updateItem を呼ぶとベスト)
+    setDisplayItems(prev => prev.map(item => 
       item.id === id ? { ...item, isCompleted: true } : item
     ));
     setSelectedItem(null);
   };
 
+  // データがない時の表示 (バックエンドの配慮 + フロントのデザイン)
+  if (!displayItems || displayItems.length === 0) {
+      // ローディング中かもしれないので少し待つか、空表示を出す
+      // ここでは簡易的に「データなし画面」を出します
+      return (
+        <div className="s3-container" style={{display:'flex', justifyContent:'center', alignItems:'center', flexDirection:'column'}}>
+           <h2 style={{color:'white', opacity:0.7}}>まだ星は見つかりません...</h2>
+           <p style={{color:'#ccc'}}>データロード中、または星が登録されていません。</p>
+           <button onClick={() => navigate('/main/CollectionScreen4')} style={{marginTop:'20px', padding:'10px 20px', borderRadius:'20px', border:'none', cursor:'pointer'}}>
+             コレクションを確認する
+           </button>
+        </div>
+      );
+  }
+
+  // ------------------------------------------------------------
+  // 5. 描画 (フロントエンドのUIを完全に維持)
+  // ------------------------------------------------------------
   return (
     <div className="s3-container">
-      {/* デバッグパネル */}
+      {/* デバッグパネル (機能統合) */}
       <div className="debug-panel">
         <button onClick={triggerShootingStar} className="debug-button">🌠 流れ星</button>
         <button onClick={triggerMeteorShower} className="debug-button">✨ 流星群</button>
+        {/* 画面遷移用ボタンもここに追加しておきます */}
+        <button onClick={() => navigate('/main/CollectionScreen4')} className="debug-button" style={{marginLeft:'10px', background:'rgba(255,255,255,0.2)'}}>
+          📋 一覧へ
+        </button>
       </div>
 
       <h1>👤 私の宇宙</h1>
@@ -74,17 +137,17 @@ const Screen3 = () => {
         />
       ))}
 
-      {/* 星空エリア */}
+      {/* 星空エリア (displayItems を使用) */}
       <div className="sky-area">
-        {items.map((item) => (
+        {displayItems.map((item) => (
           <div 
             key={item.id}
             onClick={() => setSelectedItem(item)}
             className="symbol"
             style={{
               position: 'absolute',
-              top: item.top,
-              left: item.left,
+              top: item.top,   // DB座標 or ランダム
+              left: item.left, // DB座標 or ランダム
               borderRadius: item.theme === 'star' ? '50%' : '4px',
               backgroundColor: item.theme === 'star' ? '#FFD700' : '#4169E1',
               boxShadow: item.isCompleted 
@@ -92,6 +155,7 @@ const Screen3 = () => {
                 : '0 0 5px rgba(255,255,255,0.3)',
               filter: item.isCompleted ? 'brightness(1.5)' : 'brightness(0.8)',
               transform: item.isCompleted ? 'scale(1.2)' : 'scale(1.0)',
+              cursor: 'pointer'
             }}
           >
             <span style={{ fontSize: '12px' }}>{item.theme === 'star' ? '★' : '◆'}</span>
@@ -99,7 +163,7 @@ const Screen3 = () => {
         ))}
       </div>
 
-      {/* 詳細モーダル */}
+      {/* 詳細モーダル (フロントエンドのデザインそのまま) */}
       {selectedItem && (
         <div className="modal-overlay" onClick={() => setSelectedItem(null)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -107,7 +171,7 @@ const Screen3 = () => {
             <hr style={{ borderColor: 'rgba(255,255,255,0.2)' }} />
             <div style={{ marginTop: '20px', fontSize: '1.1em', lineHeight: '1.6' }}>
               <p><strong>日付:</strong> {selectedItem.date}</p>
-              <p><strong>テーマ:</strong> {selectedItem.theme === 'star' ? '星' : '星座'}</p>
+              <p><strong>テーマ:</strong> {selectedItem.theme === 'star' ? '星 (Star)' : '星座 (Constellation)'}</p>
               <p><strong>コメント:</strong> {selectedItem.comment}</p>
               <p><strong>タグ:</strong> {selectedItem.tags.join(', ')}</p>
             </div>
@@ -127,4 +191,4 @@ const Screen3 = () => {
   );
 };
 
-export default Screen3;
+export default InGalaxy;
