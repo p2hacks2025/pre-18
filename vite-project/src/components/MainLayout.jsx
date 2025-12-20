@@ -3,7 +3,7 @@ const fetchItems = async () => {
       const currentUser = localStorage.getItem('currentUser');
       const queryParam = currentUser ? `?user=${currentUser}` : '';
       
-      const response = await fetch(`https://pre-18-3r22.onrender.com${queryParam}`);
+      const response = await fetch(`https://pre-18-3r22.onrender.com/api/stones${queryParam}`);
       
       const data = await response.json();
 
