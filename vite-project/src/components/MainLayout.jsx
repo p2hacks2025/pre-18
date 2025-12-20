@@ -47,15 +47,32 @@ const MainLayout = () => {
   };
 
   // --- 3. データを更新する関数 (CollectionScreenの「完了」ボタン用) ---
-  const updateItem = (updatedItem) => {
-    // React上の見た目を即座に更新
+// --- 3. データを更新する関数 (DBとも連携) ---
+  const updateItem = async (updatedItem) => {
+    // まず画面をサクサク更新しちゃう（楽観的UI更新）
     setItems(prevItems => 
       prevItems.map(item => item.id === updatedItem.id ? updatedItem : item)
     );
+
+    // 裏でPythonに報告
+    try {
+      await fetch(`http://127.0.0.1:5000/api/stones/${updatedItem.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          object_type: updatedItem.isConstellation ? '星座' : '星',
+          image: updatedItem.image
+        }),
+      });
+      console.log("DB更新完了: 星座へ進化");
+    } catch (error) {
+      console.error("DB更新失敗:", error);
+      alert("進化の記録に失敗しました...");
+    }
+  };
     
     // ★発展課題: ここで本当は '/api/stones/update' みたいなAPIを呼んで
     // DBの中身も書き換える必要がありますが、まずは「見た目の更新」まで！
-  };
 
   return (
     <div className="main-layout">

@@ -2,7 +2,8 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from auth_logic import register_user, login_user
 # register_stone の引数が増えたので、新しい stone_logic を使います
-from stone_logic import register_stone, get_all_stones
+from stone_logic import register_stone, get_all_stones,update_stone_status
+
 
 app = Flask(__name__)
 CORS(app)
@@ -37,6 +38,15 @@ def add_stone():
         tags=data.get('tags'),         # 配列のままでOK
         object_type=data.get('objectType'), # React側の名前(camelCase)に注意
         is_public=data.get('isPublic')
+    )
+    return jsonify(result), (200 if result["success"] else 400)
+
+def update_stone(stone_id):
+    data = request.json
+    result = update_stone_status(
+        stone_id,
+        data.get('object_type'),
+        data.get('image')
     )
     return jsonify(result), (200 if result["success"] else 400)
 

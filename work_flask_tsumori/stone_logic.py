@@ -45,3 +45,27 @@ def get_all_stones():
     finally:
         if cur: cur.close()
         if conn: conn.close()
+
+# --- 以下をファイルの末尾に追加してください ---
+
+def update_stone_status(stone_id, object_type, image):
+    """星を星座に進化させる（更新）"""
+    conn = None
+    cur = None
+    try:
+        conn = get_connection()
+        cur = conn.cursor()
+        
+        cur.execute(
+            "UPDATE stones SET object_type = %s, image = %s WHERE id = %s",
+            (object_type, image, stone_id)
+        )
+        conn.commit()
+        return {"success": True, "message": "進化しました！"}
+        
+    except Exception as e:
+        print(f"Error: {e}")
+        return {"success": False, "message": "進化に失敗しました"}
+    finally:
+        if cur: cur.close()
+        if conn: conn.close()
