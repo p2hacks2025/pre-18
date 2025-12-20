@@ -21,7 +21,9 @@ def login():
 
 @app.route('/api/stones', methods=['GET'])
 def get_stones():
-    result = get_all_stones()
+    # URLから ?user=〇〇 を受け取って logic に渡す
+    current_user = request.args.get('user')
+    result = get_all_stones(current_user)
     return jsonify(result), 200
 
 @app.route('/api/stones', methods=['POST'])
@@ -32,7 +34,8 @@ def add_stone():
         memo=data.get('memo'),
         tags=data.get('tags'),
         object_type=data.get('objectType'),
-        is_public=data.get('isPublic')
+        is_public=data.get('isPublic'),
+        username=data.get('username') # ここで名前を受け取る
     )
     return jsonify(result), (200 if result["success"] else 400)
 
