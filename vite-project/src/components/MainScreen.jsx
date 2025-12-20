@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { useOutletContext, useNavigate } from 'react-router-dom'; // ★useNavigateを追加
+import { useOutletContext, useNavigate } from 'react-router-dom';
 import './MainScreen.css';
 
 // ▼ 他人の宇宙のモックデータ
@@ -8,9 +8,9 @@ const MOCK_OTHER_UNIVERSES = [
         id: 'user_01',
         name: 'ANDROMEDA',
         items: [
-            { tags: ['イラスト'] }, { tags: ['イラスト'] }, { tags: ['イラスト'] },
-            { tags: ['趣味'] }, { tags: ['趣味'] },
-            { tags: ['仕事'] }
+            { tags: ['イラスト'], isGem: true }, { tags: ['イラスト'], isGem: true }, { tags: ['イラスト'], isConstellation: true },
+            { tags: ['趣味'], isGem: true }, { tags: ['趣味'], isConstellation: true },
+            { tags: ['仕事'], isGem: true }
         ],
         message: 'イラスト中心の宇宙です'
     },
@@ -18,9 +18,9 @@ const MOCK_OTHER_UNIVERSES = [
         id: 'user_02',
         name: 'SIRIUS',
         items: [
-            { tags: ['学習'] }, { tags: ['学習'] }, { tags: ['学習'] }, { tags: ['学習'] },
-            { tags: ['アイデア'] }, { tags: ['アイデア'] },
-            { tags: ['健康'] }
+            { tags: ['学習'], isGem: true }, { tags: ['学習'], isGem: true }, { tags: ['学習'], isConstellation: true }, { tags: ['学習'], isGem: true },
+            { tags: ['アイデア'], isGem: true }, { tags: ['アイデア'], isGem: true },
+            { tags: ['健康'], isConstellation: true }
         ],
         message: '学習記録が蓄積されています'
     },
@@ -28,9 +28,9 @@ const MOCK_OTHER_UNIVERSES = [
         id: 'user_03',
         name: 'ORION',
         items: [
-            { tags: ['健康'] }, { tags: ['健康'] },
-            { tags: ['仕事'] }, { tags: ['仕事'] },
-            { tags: ['趣味'] }, { tags: ['趣味'] }
+            { tags: ['健康'], isGem: true }, { tags: ['健康'], isGem: true },
+            { tags: ['仕事'], isGem: true }, { tags: ['仕事'], isConstellation: true },
+            { tags: ['趣味'], isGem: true }, { tags: ['趣味'], isGem: true }
         ],
         message: 'バランス型の宇宙'
     }
@@ -38,12 +38,14 @@ const MOCK_OTHER_UNIVERSES = [
 
 const MainScreen = () => {
     const { items = [] } = useOutletContext() || {}; 
-    const navigate = useNavigate(); // ★ナビゲーションフック
+    const navigate = useNavigate();
     const [Stars, setStars] = useState([]);
     
     // ▼ 状態管理
-    const [isPublicMode, setIsPublicMode] = useState(false); 
+    const [isPublicMode, setIsPublicMode] = useState(false); // false=My Universe, true=Global
     const [visitingUser, setVisitingUser] = useState(null); 
+    
+    // ※ activeTab (Display切り替え) は削除しました
 
     /* 背景で光る星のエフェクト */
     useEffect(() => {
@@ -70,10 +72,15 @@ const MainScreen = () => {
     const galaxiesWithPositions = useMemo(() => {
         const allTags = ['イラスト', 'アイデア', '学習', '健康', '仕事', '趣味'];
         
+        // フィルタリング（今回はすべて表示対象としてカウントします）
+        // もし「星座のみ」「原石のみ」などの絞り込みが必要な場合はここで復活させます
+        const filteredItems = currentItems; 
+
         const grouped = allTags.map(tag => ({
             name: tag,
-            count: currentItems.filter(item => item.tags?.includes(tag)).length,
-            latestMessage: (tag === 'アイデア' && !visitingUser) ? 'SIGNAL: 新しい進捗を検知...' : null
+            count: filteredItems.filter(item => item.tags?.includes(tag)).length,
+            // ★削除: latestMessage (シグナル) の生成処理を削除
+            latestMessage: null 
         }));
 
         const topThree = grouped.sort((a, b) => b.count - a.count).slice(0, 3);
@@ -97,43 +104,46 @@ const MainScreen = () => {
         });
     }, [currentItems, visitingUser]);
 
-    // モード切り替え
-    const toggleMode = () => {
-        if (isPublicMode) {
-            setIsPublicMode(false);
-            setVisitingUser(null);
-        } else {
-            setIsPublicMode(true);
-            setVisitingUser(null);
-        }
-    };
-
-    // ★追加: 銀河クリック時の遷移処理
     const handleGalaxyClick = (galaxy) => {
-        // 自分の宇宙を見ている時だけ遷移する
         if (!visitingUser) {
-            // state経由で「銀河の名前（タグ名）」を渡す
             navigate('/main/Ingalaxy', { state: { galaxyName: galaxy.name } });
         }
     };
 
     return (
         <div className="universe-container">
-            {/* ▼ 右上の切り替えボタン */}
-            <div className="top-right-control">
-                <button 
-                    className={`mode-toggle-btn ${isPublicMode ? 'active' : ''}`} 
-                    onClick={toggleMode}
-                >
-                    <span className="mode-label">{isPublicMode ? 'GLOBAL' : 'MY UNIVERSE'}</span>
-                    <div className="mode-indicator"></div>
-                </button>
-            </div>
+            
+            {/* ヘッダー */}
+            <header className="main-header">
+                {/* 左側：タイトル */}
+                <h1 className="main-header-title">
+                    {visitingUser 
+                        ? `UNIVERSE: ${visitingUser.name}` 
+                        : (isPublicMode ? 'GLOBAL UNIVERSE' : 'MY UNIVERSE')}
+                </h1>
 
-            {/* タイトル表示 */}
-            <h1 className="main-title">
-                {visitingUser ? `UNIVERSE: ${visitingUser.name}` : (isPublicMode ? '銀河を選択' : 'あなたの宇宙')}
-            </h1>
+                {/* 右側：タブ（モード切り替え） */}
+                {!visitingUser && (
+                    <div className="main-header-tabs">
+                        <button 
+                            className={`header-tab-btn ${!isPublicMode ? 'active' : ''}`}
+                            onClick={() => setIsPublicMode(false)}
+                        >
+                            MY UNIVERSE
+                            <div className="header-tab-indicator"></div>
+                        </button>
+                        <button 
+                            className={`header-tab-btn ${isPublicMode ? 'active' : ''}`}
+                            onClick={() => setIsPublicMode(true)}
+                        >
+                            GLOBAL
+                            <div className="header-tab-indicator"></div>
+                        </button>
+                    </div>
+                )}
+            </header>
+
+            {/* ★削除: ここにあった sub-filter-container (Display切り替え) を削除しました */}
 
             {/* 星を表示 */}
             {Stars.map((star) => (
@@ -185,18 +195,11 @@ const MainScreen = () => {
                                 left: galaxy.left,
                                 transform: 'translate(-50%, -50%)',
                                 zIndex: 10,
-                                cursor: !visitingUser ? 'pointer' : 'default' // ★カーソルを変更
+                                cursor: !visitingUser ? 'pointer' : 'default'
                             }}
-                            // ★クリックイベントを追加
                             onClick={() => handleGalaxyClick(galaxy)}
                         >
-                            {/* SF風通知バブル */}
-                            {galaxy.latestMessage && (
-                                <div className="sf-bubble">
-                                    <div className="sf-bubble-text">{galaxy.latestMessage}</div>
-                                    <div className="sf-bubble-dot"></div>
-                                </div>
-                            )}
+                            {/* ★削除: ここにあった sf-bubble (シグナル吹き出し) を削除しました */}
 
                             {/* 銀河パネル */}
                             <div

@@ -1,123 +1,60 @@
-/* 全体コンテナ */
-.s3-container {
-  padding: 20px;
-  text-align: center;
-  background-color: #050a1b;
+/* --- UI.css : 全画面共通のデザイン設定 --- */
+
+/* 1. 画面サイズ固定・スクロール完全禁止 */
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
   height: 100vh;
-  overflow: hidden;
-  position: relative;
-  color: white;
+  overflow: hidden; /* これで絶対にスクロールさせない */
+  box-sizing: border-box;
+  font-family: "Courier New", Courier, monospace;
 }
 
-/* デバッグパネル */
-.debug-panel {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 2000;
-  display: flex;
-  gap: 10px;
-}
-
-.debug-button {
-  padding: 8px 12px;
-  background-color: rgba(255, 255, 255, 0.1);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.debug-button:hover {
-  background-color: rgba(255, 255, 255, 0.2);
-}
-
-/* 星空エリア */
-.sky-area {
-  position: relative;
-  width: 100%;
-  height: 75vh;
-  margin-top: 20px;
-}
-
-/* 星・星座のシンボル共通設定 */
-.symbol {
-  width: 50px;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.5s ease;
-  cursor: pointer;
-  z-index: 10;
-}
-
-/* モーダル（グラスモーフィズム） */
-.modal-overlay {
+/* 2. 宇宙の背景（全画面共通） */
+.ui-background {
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(10px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 3000;
-  padding: 20px;
+  width: 100%;
+  height: 100%;
+  
+  /* ▼▼▼ 変更点：グラデーションから画像へ ▼▼▼ */
+  background-image: url('/image/background.png');
+  background-size: cover;        /* 縦横比を保って画面全体を覆う */
+  background-position: center;   /* 画像の中央を表示 */
+  background-repeat: no-repeat;  /* 繰り返さない */
+  
+  /* 画像が読み込まれるまでの保険として黒背景を指定 */
+  background-color: #000;
+  
+  z-index: -100; /* コンテンツの一番後ろへ */
+  pointer-events: none;
 }
 
-.modal-content {
-  background-color: rgba(255, 255, 255, 0.12);
-  color: white;
-  padding: 40px;
-  border-radius: 24px;
-  max-width: 800px;
-  width: 85%;
-  max-height: '80vh';
-  overflow-y: auto;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
-  text-align: left;
-}
-
-.button-group {
-  display: flex;
-  gap: 20px;
-  margin-top: 40px;
-}
-
-.complete-button {
-  flex: 2;
-  padding: 15px;
-  background-color: #28a745;
-  color: white;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 1em;
-}
-
-.close-button {
-  flex: 1;
-  padding: 15px;
-  background-color: rgba(255, 255, 255, 0.1);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 12px;
-  cursor: pointer;
-}
-
-/* アニメーション定義 */
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-15px); }
-}
-
-.meteor {
+/* 3. キラキラ光る星のアニメーション
+   （写真の上で星が光る演出として残します。不要なら削除してください） 
+*/
+.ui-star {
   position: absolute;
-  /* ShootingStar.css に詳細がある場合はそちらを優先 */
+  background: white;
+  border-radius: 50%;
+  opacity: 0.8;
+  animation-name: ui-twinkle;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+}
+
+@keyframes ui-twinkle {
+  0% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 4px #fff; }
+  100% { opacity: 0.3; transform: scale(0.8); }
+}
+
+/* 4. コンテンツ配置エリア */
+.ui-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
