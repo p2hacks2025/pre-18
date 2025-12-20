@@ -23,21 +23,39 @@ const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title) return alert('名称を入力してください。');
 
+    // 1. 送るデータを先に作る
+    const newItemData = {
+      title: title,
+      memo: memo,
+      tags: [selectedTag],
+      objectType: objectType,
+      isPublic: isPublic,
+      // 画面ですぐ表示するために必要なフラグも手動でつけておく
+      isGem: objectType === '星',
+      isConstellation: objectType === '星座',
+      image: null
+    };
+
     try {
-      // ★ ここでPythonにデータを送る！
+      // 2. Python(DB)に送る
       const response = await fetch('http://127.0.0.1:5000/api/stones', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        // 今のバックエンドは title だけ受け取る仕様なので、まずは title を送る → 全部送るようにしたよん！
-        body: JSON.stringify({ title:title, memo:memo, tags:[selectedTag], objectType:objectType, isPublic: isPublic 
-        }),
+        body: JSON.stringify(newItemData),
       });
 
       if (response.ok) {
-        console.log('DB保存成功！');
-        navigate('/main'); // 保存したらメイン画面へ戻る
+        console.log('完全保存に成功！');
+        
+        // ★★★ ここが重要！ ★★★
+        // 画面（MainLayout）にも「これ追加しといて！」と渡す
+        if (addItem) {
+           addItem(newItemData); 
+        }
+
+        navigate('/main');
       } else {
         alert('保存に失敗しました');
       }
@@ -46,7 +64,7 @@ const handleSubmit = async (e) => {
       alert('サーバーと通信できませんでした');
     }
   };
-
+  
   // Helper for dynamic button styles
   const getBtnStyle = (isSelected) => ({
     backgroundColor: isSelected ? currentColor : 'rgba(255,255,255,0.05)',

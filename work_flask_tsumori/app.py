@@ -6,7 +6,8 @@ from stone_logic import register_stone, get_all_stones,update_stone_status
 
 
 app = Flask(__name__)
-CORS(app)
+# どのURLからでも、どんな方法(PUT等)でも許可する設定
+CORS(app, resources={r"/*": {"origins": "*", "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]}})
 
 # --- ユーザー認証系 ---
 @app.route('/api/signup', methods=['POST'])
@@ -41,6 +42,7 @@ def add_stone():
     )
     return jsonify(result), (200 if result["success"] else 400)
 
+@app.route('/api/stones/<int:stone_id>', methods=['PUT'])
 def update_stone(stone_id):
     data = request.json
     result = update_stone_status(
