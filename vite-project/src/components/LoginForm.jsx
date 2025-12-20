@@ -18,14 +18,50 @@ const LoginForm = ({ onLogin }) => {
     e.preventDefault();
     setError('');
 
-    // --- ここに実際のAPI通信処理が入ります (今回は省略) ---
-    // ログイン成功とみなして画面遷移
+    // 送信するデータの準備
+    const endpoint = mode === 'signup' ? 'https://pre-18-3r22.onrender.com/api/signup' : 'https://pre-18-3r22.onrender.com/api/login';
+    const postData = mode === 'signup' 
+      ? { username, email, password } 
+      : { username, password };
+
+    try {
+      // Flaskサーバーにデータを送る
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(postData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // 成功時の処理
+        console.log('成功:', data);
+        //onLogin(); //ログイン成功後の画面遷移などを実行
+
+        navigate('/main');
+      } else {
+        //サーバーからエラーが返ってきた場合
+        console.error('エラー:', data);
+        setError(data.message || 'エラーが発生しました');
+      }
+
+    } catch (err) {
+      // 通信自体が失敗した場合
+      console.error('通信エラー:', err);
+      setError('サーバーとの通信に失敗しました。サーバーは起動していますか？');
+    }
+  };
+
+  // ▼▼▼ 追加機能: ログインなしでメイン画面へ行く関数 ▼▼▼
+  const handleSkipLogin = () => {
+    console.log("ゲストとして入場します");
     navigate('/main');
   };
 
-  const handleSkipLogin = () => {
-    navigate('/main');
-  };
+
 
   return (
     <div className="login-container">
