@@ -8,16 +8,15 @@ const CollectionScreen4 = () => {
   const [activeTab, setActiveTab] = useState('star');
   const [selectedItem, setSelectedItem] = useState(null);
 
-  // ▼ シンプルなフィルタリング
-  const filteredDisplayItems = items.filter(item => {
-    if (!item) return false;
-    if (activeTab === 'star') {
-      return item.isGem || item.isCompleted;
-    } else {
-      return item.isConstellation;
-    }
-  });
-
+const filteredDisplayItems = items.filter(item => {
+  if (!item) return false;
+  
+  if (activeTab === 'star') {
+    return item.object_type === '星' || item.object_type === '原石';
+  } else{
+    return item.object_type === '星座';
+  }
+});
   // 星座画像の候補
   const CONSTELLATION_IMAGES = [
       '/image/Hituzi.png', '/image/Hutago.png', '/image/Kani.png',
