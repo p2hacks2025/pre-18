@@ -2,8 +2,7 @@
 
 .s3-container {
   width: 100%;
-  height: 100%; /* 100vh を削除 */
-  /* background-color は削除 */
+  height: 100%;
   overflow: hidden;
   position: relative;
   display: flex;
@@ -11,8 +10,6 @@
   align-items: center;
   color: white;
 }
-
-/* .gridBackground は削除（UI側にあるため不要） */
 
 .debug-panel {
   position: absolute;
@@ -40,23 +37,33 @@
 .sky-area {
   position: relative;
   width: 100%;
-  height: 80%; /* 高さを調整 */
+  height: 80%;
   margin-top: 20px;
 }
 
+/* ▼▼▼ 変更点: サイズを大きく変更 ▼▼▼ */
 .symbol {
-  width: 5vmin;  /* 50px から変更 */
-  height: 5vmin; /* 50px から変更 */
+  width: 15vmin;   /* 5vmin から 15vmin (約3倍) に変更 */
+  height: 15vmin;  /* 5vmin から 15vmin に変更 */
+  
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.5s ease;
+  transition: transform 0.3s ease; /* ホバー時の動きを少し速く */
   cursor: pointer;
   z-index: 10;
-  font-size: 3vmin; /* 文字サイズ調整 */
+  
+  /* 画像が枠に収まるように設定 */
+  object-fit: contain; 
 }
 
-/* モーダル */
+/* ホバー時にさらに少し大きく */
+.symbol:hover {
+  transform: translate(-50%, -50%) scale(1.1) !important;
+  z-index: 20; /* ホバー時は手前に表示 */
+}
+
+/* モーダル関連（変更なし） */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -73,7 +80,7 @@
   max-width: 500px;
   padding: 30px;
   border-radius: 20px;
-  background-color: rgba(20, 30, 50, 0.9); /* 見やすくするため背景追加 */
+  background-color: rgba(20, 30, 50, 0.9);
   border: 1px solid rgba(255,255,255,0.2);
 }
 
@@ -82,26 +89,6 @@
   letter-spacing: 4px;
   font-size: 1.8rem;
   margin: 5px 0 20px 0;
-}
-
-.node-id {
-  font-family: monospace;
-  font-size: 0.75rem;
-  color: #4facfe;
-  letter-spacing: 3px;
-}
-
-.info-row {
-  margin-bottom: 20px;
-}
-
-.memo-text {
-  background: rgba(255, 255, 255, 0.03);
-  padding: 15px;
-  border-radius: 8px;
-  line-height: 1.6;
-  font-size: 0.95rem;
-  color: #ddd;
 }
 
 .button-group {
@@ -117,7 +104,6 @@
   cursor: pointer;
   border: none;
   font-weight: bold;
-  transition: transform 0.2s;
 }
 
 .complete-button {
