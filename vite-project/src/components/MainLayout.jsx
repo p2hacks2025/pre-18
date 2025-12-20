@@ -3,10 +3,10 @@ import { Link, Outlet } from 'react-router-dom';
 import './Navigation.css';
 
 const MainLayout = () => {
-  // ★重要: ここでデータを管理します
+  // データを管理
   const [items, setItems] = useState([]);
 
-  // --- 1. 画面が開かれたら、Pythonからデータを取ってくる (GET) ---
+  //画面が開かれたらPythonからデータを取ってくる
   useEffect(() => {
     fetchItems();
   }, []);
@@ -17,19 +17,19 @@ const MainLayout = () => {
       const data = await response.json();
 
       if (data.success) {
-        // DBのデータ(snake_case)をReact用(camelCase)に変換してセット
+        //DBのデータ(snake_case)をReact用(camelCase)に変換してセット
         const formattedItems = data.stones.map(item => ({
           id: item.id,
           title: item.title,
           memo: item.memo,
-          tags: item.tags || [], // nullなら空配列にする
+          tags: item.tags || [], //nullなら空配列
           date: item.created_at,
           
-          // ★DBの「星」か「星座」かを見て、React用のフラグを立てる
-          isGem: item.object_type === '星',            // 「星」なら原石扱い
-          isConstellation: item.object_type === '星座', // 「星座」なら星座扱い
-          isCompleted: false, // 必要ならDBにカラム追加（今回は初期値false）
-          image: null         // 画像URLがあればここに入れる
+          //DBの「星」か「星座」かを見てReact用のフラグを立てる
+          isGem: item.object_type === '星',//「星」なら原石扱い
+          isConstellation: item.object_type === '星座', //「星座」なら星座扱い
+          isCompleted: false, //必要ならDBにカラム追加
+          image: null//画像URL用
         }));
         setItems(formattedItems);
       }
@@ -38,23 +38,21 @@ const MainLayout = () => {
     }
   };
 
-  // --- 2. データを追加する関数 (InformationScreen用) ---
-  // (ここはDB保存処理をInformationScreen側でやっているので、表示更新用)
+  //データを追加する関数、表示更新のためのもの
   const addItem = (newItem) => {
     setItems(prev => [newItem, ...prev]);
-    // 念のため再取得しても良い
     fetchItems(); 
   };
 
-  // --- 3. データを更新する関数 (CollectionScreenの「完了」ボタン用) ---
-// --- 3. データを更新する関数 (DBとも連携) ---
+  //データを更新する関数
+  //データを更新する関数 (DBとも連携)
   const updateItem = async (updatedItem) => {
-    // まず画面をサクサク更新しちゃう（楽観的UI更新）
+    //UI更新
     setItems(prevItems => 
       prevItems.map(item => item.id === updatedItem.id ? updatedItem : item)
     );
 
-    // 裏でPythonに報告
+    //Pythonに報告
     try {
       await fetch(`http://127.0.0.1:5000/api/stones/${updatedItem.id}`, {
         method: 'PUT',
@@ -79,13 +77,13 @@ const MainLayout = () => {
       <div className="content-area">
         
         <main className="main-content">
-          {/* Outlet にデータを渡す */}
+          {/*Outletにデータを渡す*/}
           <Outlet context={{ items, addItem, updateItem }} />
         </main>
         
         <nav className="right-nav">
           
-          {/* 地球：宇宙を見る（自分のホーム） */}
+          {/*宇宙を見る*/}
           <Link 
             to="/main" 
             className="nav-btn planet-btn"
@@ -99,7 +97,7 @@ const MainLayout = () => {
           </Link>
 
         
-          {/* 月：原石登録 */}
+          {/*原石登録*/}
           <Link 
             to="/main/InformationScreen" 
             className="nav-btn planet-btn"
@@ -112,7 +110,7 @@ const MainLayout = () => {
             <span className="nav-text">原石登録</span>
           </Link>
 
-          {/* 太陽：コレクション */}
+          {/*コレクション*/}
           <Link 
             to="/main/CollectionScreen4" 
             className="nav-btn planet-btn sun-btn"
