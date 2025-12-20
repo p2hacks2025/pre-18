@@ -8,7 +8,7 @@ const CollectionScreen4 = () => {
   const [activeTab, setActiveTab] = useState('star');
   const [selectedItem, setSelectedItem] = useState(null);
 
-  // リストのフィルタリング（原石 or 星 or 星座）
+  // ▼ シンプルなフィルタリング
   const filteredDisplayItems = items.filter(item => {
     if (!item) return false;
     if (activeTab === 'star') {
@@ -24,27 +24,26 @@ const CollectionScreen4 = () => {
       '/image/Otome.png', '/image/Ousi.png', '/image/Shi.png',
   ];
 
+  // 星座にする処理
   const handleComplete = () => {
-    if (!selectedItem) return;
+    if (!selectedItem || !selectedItem.isGem) return;
 
-    if (selectedItem.isGem) {
-      const randomIndex = Math.floor(Math.random() * CONSTELLATION_IMAGES.length);
-      const selectedImage = CONSTELLATION_IMAGES[randomIndex];
+    const randomIndex = Math.floor(Math.random() * CONSTELLATION_IMAGES.length);
+    const selectedImage = CONSTELLATION_IMAGES[randomIndex];
 
-      const updatedItem = {
-        ...selectedItem,
-        isGem: false,           
-        isConstellation: true,  
-        image: selectedImage,   
-        memo: selectedItem.memo + '\n(星座になりました)',
-      };
+    const updatedItem = {
+      ...selectedItem,
+      isGem: false,           
+      isConstellation: true,  
+      image: selectedImage,   
+      memo: selectedItem.memo + '\n(星座になりました)',
+    };
 
-      if (updateItem) {
-        updateItem(updatedItem); 
-        alert(`原石「${selectedItem.title}」が輝き出し、星座に変わりました！`);
-      }
-      setSelectedItem(null); 
+    if (updateItem) {
+      updateItem(updatedItem); 
+      alert('星座になりました！');
     }
+    setSelectedItem(null); 
   };
 
   return (
@@ -64,7 +63,7 @@ const CollectionScreen4 = () => {
       <div className="s4-content-area">
         <div className="s4-grid-container fadeIn">
             {filteredDisplayItems.length === 0 ? (
-              <div style={{color: '#999', marginTop: '50px'}}>NO DATA FOUND</div>
+              <div style={{color: '#999', marginTop: '50px', textAlign: 'center'}}>NO DATA FOUND</div>
             ) : (
               filteredDisplayItems.map((item, index) => (
                   <div key={index} className="s4-star-card" onClick={() => setSelectedItem(item)}>
@@ -90,7 +89,6 @@ const CollectionScreen4 = () => {
               {selectedItem.tags?.map((tag, i) => <span key={i} className="s4-tag-badge">#{tag}</span>)}
             </div>
             <p>{selectedItem.memo}</p>
-            
             <div className="s4-modal-footer">
                {selectedItem.isGem && (
                  <button className="s4-complete-btn" onClick={handleComplete}>✦ AWAKEN ✦</button>
