@@ -1,106 +1,135 @@
-/* CollectionScreen4.css - Responsive Version */
+/* CollectionScreen4.css - Final Responsive Version */
 
-/* --- ベーススタイル --- */
+/* --- 1. ベーススタイル --- */
 .s4-container {
   width: 100%;
-  height: 100%; /* 親(UI)に合わせる */
+  height: 100%;
   position: relative;
-  background: transparent; /* 背景はUIに任せる */
+  background: transparent;
   color: #fff;
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* 外側へのスクロールは禁止 */
-  padding: 3vmin 5vmin; /* 余白も可変に */
+  overflow: hidden;
+  padding: 0; /* ★変更: ヘッダーを端まで伸ばすため余白を削除 */
   box-sizing: border-box;
 }
 
-/* --- ヘッダーとタブ --- */
+/* --- 2. ヘッダー（MainScreenと統一） --- */
 .s4-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 2vmin;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding-bottom: 1vmin;
-  flex-shrink: 0; /* ヘッダーが縮まないようにする */
+  align-items: center; /* 上下中央揃え */
+  padding: 20px 40px; /* ヘッダー内部に余白を持つ */
+  width: 100%;
+  box-sizing: border-box;
+  z-index: 100;
+  flex-shrink: 0;
+
+  /* 背景処理（MainScreenと同じ） */
+  background: linear-gradient(
+      to bottom, 
+      rgba(5, 10, 27, 0.95) 0%,   
+      rgba(5, 10, 27, 0.6) 60%,   
+      transparent 100%            
+  );
+  border-bottom: 1px solid rgba(79, 172, 254, 0.15);
+  backdrop-filter: blur(3px);
 }
 
 .s4-page-title {
-  font-size: 4vmin; /* 可変サイズ */
-  letter-spacing: 0.1em;
-  margin: 0;
-  text-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
   font-family: serif;
+  font-size: 2rem;
+  font-weight: 400;
+  letter-spacing: 0.15em;
+  margin: 0;
+  color: #ffffff;
+  /* 強い発光で視認性確保 */
+  text-shadow: 
+      0 0 10px rgba(79, 172, 254, 0.8),
+      0 0 20px rgba(79, 172, 254, 0.4);
 }
 
+/* --- タブエリア --- */
 .s4-tabs {
   display: flex;
-  gap: 3vmin;
+  gap: 40px; /* MainScreenと同じ間隔 */
 }
 
 .s4-tab-button {
-  background: none;
+  background: transparent;
   border: none;
   color: rgba(255, 255, 255, 0.4);
-  font-size: 2vmin; /* 可変サイズ */
+  font-family: inherit;
+  font-size: 1rem;
+  letter-spacing: 0.1em;
   cursor: pointer;
   position: relative;
-  padding-bottom: 5px;
-  transition: all 0.3s;
-  font-family: monospace;
+  padding: 10px 0;
+  transition: all 0.3s ease;
 }
 
+.s4-tab-button:hover {
+  color: #ffffff;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+}
+
+/* アクティブ時のスタイル */
 .s4-tab-button.active {
-  color: #fff;
-  text-shadow: 0 0 5px #fff;
+  color: #ffffff;
+  font-weight: bold;
+  text-shadow: 0 0 15px rgba(79, 172, 254, 1);
 }
 
+/* 下線インジケーター */
 .s4-tab-indicator {
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 0%;
+  width: 100%;
   height: 2px;
   background: #4facfe;
-  transition: width 0.3s;
+  box-shadow: 0 0 10px #4facfe;
+  transform: scaleX(0); /* 非アクティブ時は隠す */
+  transition: transform 0.3s ease;
+  transform-origin: center;
 }
 
 .s4-tab-button.active .s4-tab-indicator {
-  width: 100%;
+  transform: scaleX(1); /* アクティブ時に伸びる */
 }
 
-/* --- コンテンツエリア（ここだけスクロールさせる） --- */
+
+/* --- 3. コンテンツエリア --- */
 .s4-content-area {
-  flex: 1; /* 残りの高さを全て使う */
-  overflow-y: auto; /* 縦スクロール許可 */
-  padding-right: 10px; /* スクロールバー分の余白 */
+  flex: 1;
+  overflow-y: auto;
+  /* ★変更: コンテナの余白を消したので、ここで余白をとる */
+  padding: 20px 40px 50px 40px; 
   
-  /* スクロールバーの見た目（Chrome/Safari用） */
   scrollbar-width: thin;
-  scrollbar-color: rgba(255,255,255,0.3) transparent;
+  scrollbar-color: rgba(79, 172, 254, 0.5) transparent;
 }
 
+/* スクロールバー装飾 */
 .s4-content-area::-webkit-scrollbar {
   width: 6px;
 }
 .s4-content-area::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.3);
+  background: rgba(79, 172, 254, 0.5);
   border-radius: 3px;
 }
 
-/* --- グリッドレイアウト --- */
+
+/* --- 4. グリッドとカード --- */
 .s4-grid-container {
   display: grid;
-  /* カードの幅を画面比率(vmin)で決定 */
   grid-template-columns: repeat(auto-fill, minmax(18vmin, 1fr));
   gap: 4vmin;
-  padding-bottom: 50px; /* 下部の余白 */
+  padding-bottom: 50px;
 }
 
-/* --- スターカード（アイテム） --- */
 .s4-star-card {
   position: relative;
-  /* heightは自動、またはアスペクト比で正方形にする */
   aspect-ratio: 1 / 1; 
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -137,7 +166,6 @@
   opacity: 1;
 }
 
-/* ビジュアル要素 */
 .s4-star-visual {
   position: relative;
   width: 60%;
@@ -171,7 +199,7 @@
   to { transform: rotate(360deg); }
 }
 
-/* 写真付きの場合 */
+/* 写真付きカード */
 .s4-card-img-container {
   width: 100%;
   height: 100%;
@@ -196,7 +224,7 @@
   margin: 0;
 }
 
-/* --- 詳細モーダル --- */
+/* --- 5. 詳細モーダル --- */
 .s4-modal-overlay {
   position: fixed;
   top: 0;
@@ -213,11 +241,11 @@
 
 .s4-modal-content {
   width: 90%;
-  max-width: 600px; /* PCでの最大幅 */
+  max-width: 600px;
   background: rgba(15, 20, 35, 0.95);
   border: 1px solid rgba(79, 172, 254, 0.3);
   border-radius: 20px;
-  padding: 4vmin;
+  padding: 40px;
   position: relative;
   box-shadow: 0 0 30px rgba(79, 172, 254, 0.15);
 }
@@ -226,11 +254,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2vmin;
+  margin-bottom: 20px;
 }
 
 .s4-modal-type {
-  font-size: 1.5vmin;
+  font-size: 1rem;
   color: #4facfe;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -240,19 +268,19 @@
   background: none;
   border: none;
   color: #fff;
-  font-size: 3vmin;
+  font-size: 1.5rem;
   cursor: pointer;
 }
 
 .s4-modal-title {
-  font-size: 3vmin;
+  font-size: 2rem;
   margin: 0 0 10px 0;
   font-family: serif;
 }
 
 .s4-modal-image-wrapper {
   width: 100%;
-  height: 25vmin; /* 画像の高さも可変に */
+  height: 250px;
   overflow: hidden;
   border-radius: 10px;
   margin-bottom: 15px;
@@ -267,11 +295,11 @@
 .s4-complete-btn {
   background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
   border: none;
-  padding: 1.5vmin 3vmin;
+  padding: 15px;
   border-radius: 30px;
   color: #000;
   font-weight: bold;
-  font-size: 1.8vmin;
+  font-size: 1rem;
   cursor: pointer;
   width: 100%;
   margin-top: 20px;
@@ -286,21 +314,24 @@
 /* 戻るボタン */
 .s4-back-btn {
   position: absolute;
-  bottom: 3vmin;
-  left: 4vmin;
-  background: rgba(0,0,0,0.3);
+  bottom: 30px;
+  left: 40px;
+  background: rgba(0, 0, 0, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.3);
   color: #fff;
-  padding: 1vmin 2vmin;
+  padding: 10px 20px;
   border-radius: 30px;
   display: flex;
   align-items: center;
   cursor: pointer;
   transition: all 0.3s;
   z-index: 100;
-  font-size: 1.5vmin;
+  font-size: 0.9rem;
+  backdrop-filter: blur(5px);
 }
 
 .s4-back-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.2);
+  border-color: #fff;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }
