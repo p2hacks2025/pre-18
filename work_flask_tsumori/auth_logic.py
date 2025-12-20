@@ -1,72 +1,43 @@
 import os
+import psycopg2
 from psycopg2.extras import RealDictCursor
-from auth_logic import get_connection
 
-def register_stone(title, memo, tags, object_type, is_public):
-    """詳細データを含めて原石を保存する"""
+def get_connection():
+    # Renderの環境変数から接続。ローカル時は直書きURLでも可
+    return psycopg2.connect(os.environ.get('DATABASE_URL'))
+
+def register_user(username, email, password):
     conn = None
     cur = None
     try:
         conn = get_connection()
         cur = conn.cursor()
-        
-        # SQL実行: 項目が増えました
         cur.execute(
-            """
-            INSERT INTO stones (title, memo, tags, object_type, is_public)
-            VALUES (%s, %s, %s, %s, %s)
-            """,
-            (title, memo, tags, object_type, is_public)
+            "INSERT INTO users (username, email, password) VALUES (%s, %s, %s)",
+            (username, email, password)
         )
         conn.commit()
-        return {"success": True, "message": "原石を保存しました！"}
-        
+        return {"success": True, "message": "ユーザー登録が完了しました"}
     except Exception as e:
-        print(f"Error: {e}")
-        return {"success": False, "message": "保存に失敗しました"}
+        return {"success": False, "message": f"登録失敗: {str(e)}"}
     finally:
         if cur: cur.close()
         if conn: conn.close()
 
-def get_all_stones():
-    """全ての原石を取得する"""
+def login_user(username, password):
     conn = None
     cur = None
     try:
         conn = get_connection()
         cur = conn.cursor(cursor_factory=RealDictCursor)
-        
-        cur.execute("SELECT * FROM stones ORDER BY id DESC")
-        stones = cur.fetchall()
-        return {"success": True, "stones": stones}
-        
+        cur.execute("SELECT * FROM users WHERE username = %s AND password = %s", (username, password))
+        user = cur.fetchone()
+        if user:
+            return {"success": True, "message": "ログイン成功", "user": user}
+        else:
+            return {"success": False, "message": "ユーザー名またはパスワードが違います"}
     except Exception as e:
-        print(f"Error: {e}")
-        return {"success": False, "stones": []}
-    finally:
-        if cur: cur.close()
-        if conn: conn.close()
-
-# --- 以下をファイルの末尾に追加してください ---
-
-def update_stone_status(stone_id, object_type, image):
-    """星を星座に進化させる（更新）"""
-    conn = None
-    cur = None
-    try:
-        conn = get_connection()
-        cur = conn.cursor()
-        
-        cur.execute(
-            "UPDATE stones SET object_type = %s, image = %s WHERE id = %s",
-            (object_type, image, stone_id)
-        )
-        conn.commit()
-        return {"success": True, "message": "進化しました！"}
-        
-    except Exception as e:
-        print(f"Error: {e}")
-        return {"success": False, "message": "進化に失敗しました"}
+        return {"success": False, "message": str(e)}
     finally:
         if cur: cur.close()
         if conn: conn.close()

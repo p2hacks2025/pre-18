@@ -5,7 +5,7 @@
 #追記、MOも
 prac_flask
 react-sample-app
-node_module
+node_modules/
 
 ### Node ###
 # Logs
