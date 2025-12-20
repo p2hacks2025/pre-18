@@ -53,12 +53,16 @@ const MainLayout = () => {
     );
 
     //Pythonに報告
+//Pythonに報告
     try {
       await fetch(`https://pre-18-3r22.onrender.com/api/stones/${updatedItem.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          object_type: updatedItem.isConstellation ? '星座' : '星',
+          // ▼▼▼ ここを修正！ ▼▼▼
+          objectType: updatedItem.isConstellation ? '星座' : '星', 
+          // （修正前は object_type でした）
+          
           image: updatedItem.image
         }),
       });
