@@ -24,21 +24,25 @@ const handleSubmit = async (e) => {
     if (!title) return alert('名称を入力してください。');
 
     // 1. 送るデータを先に作る
+// 1. 送るデータを先に作る
     const newItemData = {
       title: title,
       memo: memo,
       tags: [selectedTag],
       objectType: objectType,
       isPublic: isPublic,
-      // 画面ですぐ表示するために必要なフラグも手動でつけておく
+      
+      // ▼▼▼ 追加：ブラウザから名前を取り出してつける ▼▼▼
+      username: localStorage.getItem('currentUser'),
+      // ▲▲▲ 追加終わり
+      
       isGem: objectType === '星',
       isConstellation: objectType === '星座',
       image: null
     };
-
     try {
       // 2. Python(DB)に送る
-      const response = await fetch('https://pre-18-3r22.onrender.com/api/stones', {
+      const response = await fetch('/api/stones', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

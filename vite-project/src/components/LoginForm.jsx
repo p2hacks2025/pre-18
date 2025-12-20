@@ -36,10 +36,13 @@ const LoginForm = ({ onLogin }) => {
 
       const data = await response.json();
 
-      if (response.ok) {
+if (response.ok) {
         // 成功時の処理
         console.log('成功:', data);
-        //onLogin(); //ログイン成功後の画面遷移などを実行
+
+        // ▼▼▼ ここを追加（これが重要！）▼▼▼
+        localStorage.setItem('currentUser', username);
+        // ▲▲▲ 追加終わり
 
         navigate('/main');
       } else {

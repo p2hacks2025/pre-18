@@ -11,25 +11,31 @@ const MainLayout = () => {
     fetchItems();
   }, []);
 
-  const fetchItems = async () => {
+const fetchItems = async () => {
     try {
-      const response = await fetch('https://pre-18-3r22.onrender.com/api/stones');
+      // ▼▼▼ 修正：自分の名前をURLにつけて送るように変更
+      const currentUser = localStorage.getItem('currentUser');
+      // ※名前がない時(null)のエラー除けも入れておきます
+      const queryParam = currentUser ? `?user=${currentUser}` : '';
+      
+      const response = await fetch(`https://pre-18-3r22.onrender.com/api/stones${queryParam}`);
+      // ▲▲▲ 修正終わり
+      
       const data = await response.json();
 
       if (data.success) {
-        //DBのデータ(snake_case)をReact用(camelCase)に変換してセット
         const formattedItems = data.stones.map(item => ({
           id: item.id,
           title: item.title,
           memo: item.memo,
-          tags: item.tags || [], //nullなら空配列
+          tags: item.tags || [], 
           date: item.created_at,
           
-          //DBの「星」か「星座」かを見てReact用のフラグを立てる
-          isGem: item.object_type === '星',//「星」なら原石扱い
-          isConstellation: item.object_type === '星座', //「星座」なら星座扱い
-          isCompleted: false, //必要ならDBにカラム追加
-          image: null//画像URL用
+          isGem: item.object_type === '星',
+          isConstellation: item.object_type === '星座',
+          isCompleted: false, 
+          image: item.image,
+          username: item.username // 所有者情報も持たせる
         }));
         setItems(formattedItems);
       }
@@ -37,7 +43,6 @@ const MainLayout = () => {
       console.error("データの取得に失敗:", error);
     }
   };
-
   //データを追加する関数、表示更新のためのもの
   const addItem = (newItem) => {
     setItems(prev => [newItem, ...prev]);
