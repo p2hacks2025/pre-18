@@ -31,14 +31,14 @@ const LoginForm = ({ onLogin }) => {
     e.preventDefault();
     setError('');
 
-    // 送信するデータの準備
+    //送信するデータの準備
     const endpoint = mode === 'signup' ? 'http://127.0.0.1:5000/api/signup' : 'http://127.0.0.1:5000/api/login';
     const postData = mode === 'signup' 
       ? { username, email, password } 
       : { username, password };
 
     try {
-      // Flaskサーバーにデータを送る
+      //Flaskサーバーにデータを送る
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
@@ -50,7 +50,7 @@ const LoginForm = ({ onLogin }) => {
       const data = await response.json();
 
       if (response.ok) {
-        // 成功時の処理
+        //成功時の処理
         console.log('成功:', data);
         //onLogin(); //ログイン成功後の画面遷移などを実行
         
@@ -62,13 +62,13 @@ const LoginForm = ({ onLogin }) => {
       }
 
     } catch (err) {
-      // 通信自体が失敗した場合
+      //通信が失敗した場合
       console.error('通信エラー:', err);
       setError('サーバーとの通信に失敗しました。サーバーは起動していますか？');
     }
   };
 
-  // ▼▼▼ 追加機能: ログインなしでメイン画面へ行く関数 ▼▼▼
+  //ログインなしでメイン画面へ行く関数
   const handleSkipLogin = () => {
     console.log("ゲストとして入場します");
     navigate('/main');
@@ -144,7 +144,7 @@ const LoginForm = ({ onLogin }) => {
           </div>
         </div>
 
-        {/* ▼▼▼ 追加機能: ゲスト入場ボタン（デザインは控えめに） ▼▼▼ */}
+        {/*デモ用ボタン*/}
         <div style={{ marginTop: '20px', textAlign: 'center' }}>
           <button 
             type="button" 
