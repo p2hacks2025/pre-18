@@ -1,24 +1,71 @@
-# 簡易データベース（サーバーを再起動すると消えます）
-# MainScreenで集計テストができるよう、初期データを入れておきます
-stones_db = [
-    {"id": 1, "title": "Reactの勉強", "tags": ["学習", "仕事"]},
-    {"id": 2, "title": "新しいアプリのアイデア", "tags": ["アイデア", "趣味"]},
-    {"id": 3, "title": "ジムに行く", "tags": ["健康"]},
-    {"id": 4, "title": "イラスト練習", "tags": ["イラスト", "趣味"]},
-    {"id": 5, "title": "API設計", "tags": ["仕事", "学習"]},
-]
+from psycopg2.extras import RealDictCursor
+from auth_logic import get_connection
+
+def register_stone(title, memo, tags, object_type, is_public):
+    """詳細データを含めて原石を保存する"""
+    conn = None
+    cur = None
+    try:
+        conn = get_connection()
+        cur = conn.cursor()
+        
+        # SQL実行: 項目が増えました
+        cur.execute(
+            """
+            INSERT INTO stones (title, memo, tags, object_type, is_public)
+            VALUES (%s, %s, %s, %s, %s)
+            """,
+            (title, memo, tags, object_type, is_public)
+        )
+        conn.commit()
+        return {"success": True, "message": "原石を保存しました！"}
+        
+    except Exception as e:
+        print(f"Error: {e}")
+        return {"success": False, "message": "保存に失敗しました"}
+    finally:
+        if cur: cur.close()
+        if conn: conn.close()
 
 def get_all_stones():
-    """保存されているすべてのデータを返す"""
-    return {"success": True, "items": stones_db}
+    """全ての原石を取得する"""
+    conn = None
+    cur = None
+    try:
+        conn = get_connection()
+        cur = conn.cursor(cursor_factory=RealDictCursor)
+        
+        cur.execute("SELECT * FROM stones ORDER BY id DESC")
+        stones = cur.fetchall()
+        return {"success": True, "stones": stones}
+        
+    except Exception as e:
+        print(f"Error: {e}")
+        return {"success": False, "stones": []}
+    finally:
+        if cur: cur.close()
+        if conn: conn.close()
 
-def register_stone(title, tags):
-    """新しいデータを登録する（機能2用）"""
-    new_id = len(stones_db) + 1
-    new_stone = {
-        "id": new_id,
-        "title": title,
-        "tags": tags
-    }
-    stones_db.append(new_stone)
-    return {"success": True, "message": "登録しました", "stone": new_stone}
+# --- 以下をファイルの末尾に追加してください ---
+
+def update_stone_status(stone_id, object_type, image):
+    """星を星座に進化させる（更新）"""
+    conn = None
+    cur = None
+    try:
+        conn = get_connection()
+        cur = conn.cursor()
+        
+        cur.execute(
+            "UPDATE stones SET object_type = %s, image = %s WHERE id = %s",
+            (object_type, image, stone_id)
+        )
+        conn.commit()
+        return {"success": True, "message": "進化しました！"}
+        
+    except Exception as e:
+        print(f"Error: {e}")
+        return {"success": False, "message": "進化に失敗しました"}
+    finally:
+        if cur: cur.close()
+        if conn: conn.close()

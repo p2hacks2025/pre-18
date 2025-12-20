@@ -1,117 +1,318 @@
-/*背景の余白を消す*/
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  background-color: #050a1b;
+/* --- 右上の切り替えボタン --- */
+
+.top-right-control {
+
+    position: absolute;
+
+    top: 30px;
+
+    right: 40px;
+
+    z-index: 100;
+
 }
 
-/*画面の調整*/
-.universe-container {
-  width: 100%;
-  height: 100vh;
-  background-color: #050a1b;
-  color: #fff;
-  overflow: hidden;
-  position: relative;
+
+
+.mode-toggle-btn {
+
+    background: rgba(11, 16, 38, 0.6);
+
+    border: 1px solid #4facfe;
+
+    color: #4facfe;
+
+    padding: 10px 20px;
+
+    border-radius: 30px;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    transition: all 0.3s ease;
+
+    backdrop-filter: blur(5px);
+
+    font-family: monospace;
+
+    letter-spacing: 1px;
+
 }
 
-/*背景で光ってる星の見た目*/
-.twinkle-star{
-  position: absolute;
-  background-color: white;
-  border-radius: 50%;
-  opacity: 0;/*最初は透明にする*/
-  animation: twinkle linear infinite;/*アニメーション実行*/
+
+
+.mode-toggle-btn:hover {
+
+    background: rgba(79, 172, 254, 0.2);
+
+    box-shadow: 0 0 15px rgba(79, 172, 254, 0.4);
+
 }
 
-/*星の背景全体のレイヤー（星を重ねるためのもの）*/
-.login-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1;/*フォームより後ろに置く*/
+
+
+.mode-toggle-btn.active {
+
+    background: rgba(79, 172, 254, 0.2);
+
+    border-color: #fff;
+
+    color: #fff;
+
 }
 
-/* タイトルを太字・ネオンに */
-.main-title {
-  position: absolute;
-  top: 0px;
-  left: 20px;
-  font-size: 2rem;
-  font-weight: 800;
-  letter-spacing: 10px;
-  color: #4facfe;
-  text-shadow: 0 0 20px rgba(79, 172, 254, 0.6);
-  z-index: 10;
-  font-family: 'serif';
+
+
+.mode-indicator {
+
+    width: 10px;
+
+    height: 10px;
+
+    background: #4facfe;
+
+    border-radius: 50%;
+
+    box-shadow: 0 0 10px #4facfe;
+
+    transition: 0.3s;
+
 }
 
-/* 銀河のパネル */
+
+
+.mode-toggle-btn.active .mode-indicator {
+
+    background: #ff0055; /* 他人モードの時は赤っぽくするなど */
+
+    box-shadow: 0 0 10px #ff0055;
+
+}
+
+
+
+/* --- 他人の宇宙リスト表示エリア --- */
+
+.universe-list-view {
+
+    width: 100%;
+
+    height: 100%;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding-top: 60px; /* タイトル分の余白 */
+
+    z-index: 10;
+
+    position: relative;
+
+}
+
+
+
+.user-grid {
+
+    display: flex;
+
+    gap: 30px;
+
+    flex-wrap: wrap;
+
+    justify-content: center;
+
+}
+
+
+
+.user-card {
+
+    width: 200px;
+
+    height: 250px;
+
+    background: rgba(255, 255, 255, 0.05);
+
+    border: 1px solid rgba(255, 255, 255, 0.2);
+
+    border-radius: 10px;
+
+    padding: 20px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+
+    position: relative;
+
+    overflow: hidden;
+
+    color: #fff;
+
+}
+
+
+
+.user-card:hover {
+
+    transform: translateY(-10px);
+
+    background: rgba(79, 172, 254, 0.1);
+
+    border-color: #4facfe;
+
+    box-shadow: 0 0 20px rgba(79, 172, 254, 0.3);
+
+}
+
+
+
+.user-planet-icon {
+
+    width: 60px;
+
+    height: 60px;
+
+    background: radial-gradient(circle at 30% 30%, #4facfe, #0b1026);
+
+    border-radius: 50%;
+
+    margin-bottom: 20px;
+
+    box-shadow: 0 0 15px rgba(79, 172, 254, 0.5);
+
+}
+
+
+
+.user-card h3 {
+
+    margin: 0 0 10px 0;
+
+    font-size: 1.2rem;
+
+    letter-spacing: 2px;
+
+}
+
+
+
+.user-card p {
+
+    font-size: 0.8rem;
+
+    color: #ccc;
+
+    text-align: center;
+
+}
+
+
+
+/* --- 探索中の「戻るボタン」 --- */
+
+.back-to-list-btn {
+
+    position: absolute;
+
+    top: 100px;
+
+    left: 40px;
+
+    background: transparent;
+
+    border: 1px solid rgba(255,255,255,0.5);
+
+    color: #fff;
+
+    padding: 8px 16px;
+
+    cursor: pointer;
+
+    z-index: 50;
+
+    font-family: monospace;
+
+    transition: 0.3s;
+
+}
+
+
+
+.back-to-list-btn:hover {
+
+    background: rgba(255,255,255,0.1);
+
+    border-color: #fff;
+
+}
 .galaxy-card {
-  width: 312px;
-  height: 312px;
-  background-color: transparent;
-  border: none;
-  box-shadow: none; 
-  
-  backdrop-filter: none;
-  overflow: visible;
-  transition: all 0.4s ease;
-  position: relative;
+    /* ▼ ここで銀河の基本サイズを決定します */
+    width: 150px;  /* ここを小さくすると全体が小さくなります */
+    height: 150px; /* widthと同じ値にしてください */
+
+    /* 以下は配置や動きの設定 */
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    /* 回転や拡大縮小（scale）のアニメーションを滑らかにする */
+    transition: transform 0.5s ease; 
 }
 
-/* ホバー時の挙動*/
-.galaxy-card:hover {
-  transform: scale(1.05) !important;
-}
+/* MainScreen.css */
 
-/* 通知バブル（SF通信風） */
-.sf-bubble {
-  position: absolute;
-  top: -85px;
-  left: 50%;
-  background: rgba(0, 20, 40, 0.8);
-  border: 1px solid #4facfe;
-  color: #4facfe;
-  padding: 10px 15px;
-  font-size: 0.75rem;
-  letter-spacing: 1px;
-  clip-path: polygon(0% 0%, 100% 0%, 100% 80%, 20% 80%, 10% 100%, 10% 80%, 0% 80%);
-  backdrop-filter: blur(5px);
-  min-width: 180px;
-}
-
-.sf-bubble-dot {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  width: 8px;
-  height: 8px;
-  background-color: #ff4d4f;
-  border-radius: 50%;
-  box-shadow: 0 0 10px #ff4d4f;
-}
-
-/* 新しく追加：画像とラベルのセットを制御 */
-.galaxy-wrapper {
-  display: flex;
-  flex-direction: column; /* 縦に並べる */
-  align-items: center;    /* ★ これで中身が水平方向の中央に揃う */
-}
-
-/* 銀河ラベル：自身のテキストも中央寄せにする */
 .galaxy-label {
-  margin-top: 10px;
-  font-size: 1rem;
-  font-weight: bold;
-  letter-spacing: 4px;
-  color: #4facfe;
-  font-family: 'serif';
-  text-align: center;     /* ★ 文字自体を中央に寄せる */
-  width: 100%;            /* 横幅をいっぱいにして中央判定を正確にする */
+    color: #ffffff;             /* 文字を真っ白に */
+    font-weight: bold;          /* 少し太く */
+    text-shadow: 
+        0 0 5px #4facfe,        /* 青い発光 */
+        0 0 10px #4facfe;       /* 強めの発光 */
+    letter-spacing: 1px;        /* 文字間隔を広げて読みやすく */
+    margin-top: 10px;           /* クリスタルとの距離 */
+    font-size: 0.9rem;          /* サイズ微調整 */
+}
+
+/* SF通知バブルの文字も同様に見やすく */
+.sf-bubble-text {
+    color: #ccffff;
+    text-shadow: 0 0 3px rgba(0,0,0, 0.8); /* こちらは逆に黒い影で読みやすく */
+    font-weight: 500;
+}
+
+/* ★修正: クリスタルカードのサイズを固定し、大きすぎず小さすぎないサイズに */
+.galaxy-card {
+  width: 140px;  /* 固定幅 */
+  height: 140px; /* 固定高さ */
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* 背景色の削除（画像を目立たせるため） */
+  background: transparent; 
+  transition: transform 0.3s, filter 0.3s;
+}
+
+.galaxy-card:hover {
+  transform: scale(1.1) rotate(0deg) !important;
+  /* ▼ 以下の行が「光る（青白い影を落とす）」効果です */
+  filter: drop-shadow(0 0 15px rgba(79, 172, 254, 0.6));
 }

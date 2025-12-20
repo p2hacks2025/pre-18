@@ -1,0 +1,105 @@
+/* Navigation.css */
+
+/* --- 全体のレイアウト --- */
+.main-layout {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  
+  /* ▼ 既存の背景色設定があれば削除またはコメントアウト ▼ */
+  /* background-color: #0b1026; */ 
+
+  /* ▼ 以下を追加：背景写真の設定 ▼ */
+  background-image: url('/image/background.png'); /* publicフォルダに入れたファイル名 */
+  background-size: cover;   /* 縦横比を保ったまま、画面全体を覆うように拡大縮小 */
+  background-position: center center; /* 画像の中央を画面の中央に合わせる */
+  background-repeat: no-repeat; /* 画像を繰り返さない */
+  
+  /* 念のため、画像が読み込まれるまでの背景色も指定しておくと親切 */
+  background-color: #0b1026;
+  background-attachment: fixed;
+  /* 補足: このレイアウトは height: 100vh; overflow: hidden; になっているので
+   これだけで「固定」されたように見えます。
+   もし画面全体がスクロールする構成の場合は、ここに
+   
+   を追加すると、背景だけがその場に留まります。
+  */
+}
+
+.content-area {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+.main-content {
+  flex: 1;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* --- 右側のナビゲーションバー --- */
+.right-nav {
+  width: 300px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  padding: 40px 0;
+  z-index: 100;
+  border-left: 1px solid rgba(255, 255, 255, 0.05);
+  background-image: url('/image/background.png'); 
+}
+
+/* --- ナビゲーションボタン（共通スタイル） --- */
+.nav-btn {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  text-decoration: none;
+  font-size: 1.4rem;
+  font-weight: bold;
+  text-align: center;
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  border: none;
+  line-height: 1.4;
+  flex-shrink: 0;
+  overflow: hidden;
+  text-shadow: 0 2px 15px rgba(0, 0, 0, 0.8);
+}
+
+/* ホバー時の動き */
+.nav-btn:hover {
+  transform: scale(1.05);
+}
+
+/* --- ボタン内の画像 --- */
+.nav-btn-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.nav-btn:hover .nav-btn-image {
+  opacity: 0.85; /* ホバー時に少し明るくする演出を追加 */
+}
+
+/* --- ボタン内のテキスト --- */
+.nav-text {
+  position: relative;
+  z-index: 1;
+}

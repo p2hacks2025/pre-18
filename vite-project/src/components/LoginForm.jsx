@@ -68,6 +68,12 @@ const LoginForm = ({ onLogin }) => {
     }
   };
 
+  // ▼▼▼ 追加機能: ログインなしでメイン画面へ行く関数 ▼▼▼
+  const handleSkipLogin = () => {
+    console.log("ゲストとして入場します");
+    navigate('/main');
+  };
+
   return (
     <div className="login-container">
       <div className="login-background">
@@ -123,6 +129,9 @@ const LoginForm = ({ onLogin }) => {
               <label className="input-label">パスワード</label>
               <input type="password" className="input-glow" value={password} onChange={(e) => setPassword(e.target.value)} required />
             </div>
+            
+            {/* エラーメッセージ表示エリア */}
+            {error && <p style={{ color: '#ff4b4b', fontSize: '0.8rem', marginTop: '10px' }}>{error}</p>}
           </div>
         </div>
 
@@ -134,6 +143,35 @@ const LoginForm = ({ onLogin }) => {
             </button>
           </div>
         </div>
+
+        {/* ▼▼▼ 追加機能: ゲスト入場ボタン（デザインは控えめに） ▼▼▼ */}
+        <div style={{ marginTop: '20px', textAlign: 'center' }}>
+          <button 
+            type="button" 
+            onClick={handleSkipLogin}
+            style={{
+              background: 'transparent',
+              border: '1px dashed rgba(255, 255, 255, 0.3)',
+              color: 'rgba(255, 255, 255, 0.6)',
+              padding: '8px 15px',
+              borderRadius: '20px',
+              fontSize: '0.75rem',
+              cursor: 'pointer',
+              transition: 'all 0.3s'
+            }}
+            onMouseOver={(e) => {
+              e.target.style.color = '#fff';
+              e.target.style.borderColor = currentColor;
+            }}
+            onMouseOut={(e) => {
+              e.target.style.color = 'rgba(255, 255, 255, 0.6)';
+              e.target.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+            }}
+          >
+            ゲストとして探索（ログインなし）
+          </button>
+        </div>
+
       </form>
     </div>
   );

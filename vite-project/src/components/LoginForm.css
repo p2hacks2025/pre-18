@@ -16,9 +16,9 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: #050a1b;
+  background-color: #000000;
   overflow: hidden;
-  color: #fff;
+  color: #ffffff;
   font-family: 'serif';
 }
 
