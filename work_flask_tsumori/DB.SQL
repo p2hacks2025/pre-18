@@ -4,3 +4,4 @@ CREATE TABLE users (
     email TEXT UNIQUE NOT NULL, -- UNIQUEをつけると重複をDBが防いでくれる
     password TEXT NOT NULL
 );
+CREATE TABLE 

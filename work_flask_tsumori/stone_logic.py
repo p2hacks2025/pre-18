@@ -1,3 +1,4 @@
+import os
 from psycopg2.extras import RealDictCursor
 from auth_logic import get_connection
 
