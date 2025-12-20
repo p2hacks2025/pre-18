@@ -1,4 +1,4 @@
-/* 全体コンテナ */
+/*全体コンテナ*/
 .s3-container {
   padding: 20px;
   text-align: center;
@@ -9,7 +9,7 @@
   color: white;
 }
 
-/* デバッグパネル */
+/*デバッグパネル*/
 .debug-panel {
   position: absolute;
   top: 10px;
@@ -19,6 +19,7 @@
   gap: 10px;
 }
 
+/*デバッグボタン*/
 .debug-button {
   padding: 8px 12px;
   background-color: rgba(255, 255, 255, 0.1);
@@ -29,11 +30,12 @@
   transition: background-color 0.2s;
 }
 
+/*デバックボタンの演出*/
 .debug-button:hover {
   background-color: rgba(255, 255, 255, 0.2);
 }
 
-/* 星空エリア */
+/*星空エリア*/
 .sky-area {
   position: relative;
   width: 100%;
@@ -41,7 +43,7 @@
   margin-top: 20px;
 }
 
-/* 星・星座のシンボル共通設定 */
+/*星・星座のシンボル*/
 .symbol {
   width: 50px;
   height: 50px;
@@ -53,7 +55,7 @@
   z-index: 10;
 }
 
-/* モーダル（グラスモーフィズム） */
+/*モーダル*/
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -69,6 +71,7 @@
   padding: 20px;
 }
 
+/*モーダルのコンテナ*/
 .modal-content {
   background-color: rgba(255, 255, 255, 0.12);
   color: white;
@@ -83,12 +86,14 @@
   text-align: left;
 }
 
+/*ボタンのグループ*/
 .button-group {
   display: flex;
   gap: 20px;
   margin-top: 40px;
 }
 
+/*決定ボタン*/
 .complete-button {
   flex: 2;
   padding: 15px;
@@ -101,6 +106,7 @@
   font-size: 1em;
 }
 
+/*戻るボタン*/
 .close-button {
   flex: 1;
   padding: 15px;
@@ -111,7 +117,7 @@
   cursor: pointer;
 }
 
-/* アニメーション定義 */
+/*アニメーション定義*/
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-15px); }
@@ -119,5 +125,4 @@
 
 .meteor {
   position: absolute;
-  /* ShootingStar.css に詳細がある場合はそちらを優先 */
 }

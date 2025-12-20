@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import './InGalaxy.css'; // 新しく作ったCSS
+import './InGalaxy.css';
 import './ShootingStar.css'; 
 
 const Screen3 = () => {
-  // --- データ管理 ---
+  //データ管理
   const [items, setItems] = useState([
     { id: 1, theme: 'star', title: '一番星', date: '2025-12-01', comment: 'とても明るい星でした。', tags: ['天体', '日常'], isCompleted: false, top: '20%', left: '15%' },
     { id: 2, theme: 'star', title: '北極星', date: '2025-12-05', comment: '道標になる星です。', tags: ['天体', '風景'], isCompleted: false, top: '60%', left: '10%' },
@@ -17,7 +17,7 @@ const Screen3 = () => {
   const [showShootingStar, setShowShootingStar] = useState(false);
   const [meteors, setMeteors] = useState([]);
 
-  // --- アニメーション制御 ---
+  //アニメーション制御
   useEffect(() => {
     const timer = setTimeout(() => {
       const random = Math.random() * 100;
@@ -55,7 +55,7 @@ const Screen3 = () => {
 
   return (
     <div className="s3-container">
-      {/* デバッグパネル */}
+      {/*デバッグパネル*/}
       <div className="debug-panel">
         <button onClick={triggerShootingStar} className="debug-button">🌠 流れ星</button>
         <button onClick={triggerMeteorShower} className="debug-button">✨ 流星群</button>
@@ -64,7 +64,7 @@ const Screen3 = () => {
       <h1>👤 私の宇宙</h1>
       <p style={{ color: '#ccc' }}>夜空のアイコンをタップして詳細を確認してください。</p>
 
-      {/* 流れ星アニメーション */}
+      {/*流れ星アニメーション*/}
       {showShootingStar && <div className="shooting-star"></div>}
       {meteors.map((m) => (
         <div
@@ -74,7 +74,7 @@ const Screen3 = () => {
         />
       ))}
 
-      {/* 星空エリア */}
+      {/*星空エリア*/}
       <div className="sky-area">
         {items.map((item) => (
           <div 
@@ -99,7 +99,7 @@ const Screen3 = () => {
         ))}
       </div>
 
-      {/* 詳細モーダル */}
+      {/*詳細*/}
       {selectedItem && (
         <div className="modal-overlay" onClick={() => setSelectedItem(null)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
