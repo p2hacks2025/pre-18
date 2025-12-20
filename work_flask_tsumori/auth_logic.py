@@ -3,8 +3,9 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 
 def get_connection():
-    # Renderの環境変数から接続。ローカル時は直書きURLでも可
-    return psycopg2.connect(os.environ.get('DATABASE_URL'))
+    # 本質：Render上ではDATABASE_URLが自動で入る。なければローカルのDBに繋ぐ。
+    url = os.environ.get('DATABASE_URL', "dbname=postgres user=postgres password=あなたのパスワード host=localhost port=5432")
+    return psycopg2.connect(url)
 
 def register_user(username, email, password):
     conn = None

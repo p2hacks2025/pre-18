@@ -36,12 +36,14 @@ def add_stone():
     )
     return jsonify(result), (200 if result["success"] else 400)
 
-@app.route('/api/stones/update', methods=['POST'])
-def update_stone():
+# 本質的なRESTful API：URLにIDを含める
+@app.route('/api/stones/<int:stone_id>', methods=['PUT'])
+def update_stone(stone_id):
     data = request.json
-    result = update_stone_status(data.get('id'), data.get('objectType'), data.get('image'))
+    result = update_stone_status(stone_id, data.get('objectType'), data.get('image'))
     return jsonify(result), (200 if result["success"] else 400)
 
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 10000))
+    # 本質：Renderでは環境変数PORTが指定される。なければローカル用の5000を使う。
+    port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
