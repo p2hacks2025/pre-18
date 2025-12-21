@@ -3,14 +3,13 @@ import { useOutletContext, useNavigate } from 'react-router-dom';
 import './CollectionScreen4.css';
 
 const CollectionScreen4 = () => {
-  // MainLayoutからデータをもらう（もし来なくても空配列にする）
   const { items = [], updateItem } = useOutletContext() || {};
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('star');
   const [selectedItem, setSelectedItem] = useState(null);
 
-  /* ▼▼▼ 追加：強制サンプルデータ（APIがダメな時用） ▼▼▼ */
-  const sampleData = [
+  // ▼▼▼ 修正ポイント：サンプルデータを「記憶」できるように useState に入れました ▼▼▼
+  const [sampleItems, setSampleItems] = useState([
     {
       id: 'sample-1',
       title: 'ポートフォリオページの作成',
@@ -56,33 +55,28 @@ const CollectionScreen4 = () => {
       tags: ['調査'],
       image: null
     }
-  ];
-  /* ▲▲▲ 追加終わり ▲▲▲ */
+  ]);
 
-  // ▼▼▼ 修正：データがあるならそれを、なければサンプルを使う ▼▼▼
-  // itemsの中身が0個なら、sampleDataを使うように切り替えます
-  const sourceData = (items && items.length > 0) ? items : sampleData;
+  // ▼ データ切り替え：本番データ(items)がなければ、記憶したサンプル(sampleItems)を使う
+  const sourceData = (items && items.length > 0) ? items : sampleItems;
 
   const filteredDisplayItems = sourceData.filter(item => {
     if (!item) return false;
     
     if (activeTab === 'star') {
-      // 星、原石、または object_type が 星/原石 のものを表示
       return item.object_type === '星' || item.object_type === '原石' || item.isGem;
     } else {
       return item.object_type === '星座' || item.isConstellation;
     }
   });
 
-  // 星座画像の候補
   const CONSTELLATION_IMAGES = [
       '/image/Hituzi.png', '/image/Hutago.png', '/image/Kani.png',
       '/image/Otome.png', '/image/Ousi.png', '/image/Shi.png',
   ];
 
-  // 星座にする処理
+  // ▼▼▼ 修正ポイント：進化ロジック ▼▼▼
   const handleComplete = () => {
-    // データがない場合のガード
     if (!selectedItem) return;
 
     const randomIndex = Math.floor(Math.random() * CONSTELLATION_IMAGES.length);
@@ -92,19 +86,20 @@ const CollectionScreen4 = () => {
       ...selectedItem,
       isGem: false,           
       isConstellation: true,
-      object_type: '星座', // ここも更新
+      object_type: '星座', 
       image: selectedImage,   
       memo: selectedItem.memo + '\n(星座になりました)',
     };
 
-    if (updateItem) {
-      updateItem(updatedItem); 
-      alert('星座になりました！');
+    // 分岐：本番データがある時は本番更新、ない時はサンプル更新
+    if (items && items.length > 0) {
+        if (updateItem) updateItem(updatedItem);
     } else {
-       // updateItem関数がない（サンプルデータの）場合、見た目だけ変えるなどの処理が必要ですが
-       // いったんアラートだけ出します
-       alert('（サンプルモード）星座になりました！');
+        // サンプルデータの更新（ここが重要）
+        setSampleItems(prev => prev.map(item => item.id === updatedItem.id ? updatedItem : item));
     }
+    
+    alert('星座になりました！');
     setSelectedItem(null); 
   };
 
@@ -152,7 +147,6 @@ const CollectionScreen4 = () => {
             </div>
             <p>{selectedItem.memo}</p>
             <div className="s4-modal-footer">
-               {/* 原石または星の場合にボタンを表示 */}
                {(selectedItem.isGem || selectedItem.object_type === '原石' || selectedItem.object_type === '星') && (
                  <button className="s4-complete-btn" onClick={handleComplete}>✦ AWAKEN ✦</button>
                )}
